@@ -17,6 +17,7 @@ const cols = [
       { href: '/education', label: 'Beauty School' },
       { href: '/help', label: 'Help Center' },
       { href: '/beauty-profile', label: 'Beauty Profile' },
+      { href: '/integration-guide', label: 'API Integration Guide' },
     ],
   },
   {
