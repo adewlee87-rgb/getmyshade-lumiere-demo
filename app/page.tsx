@@ -7,6 +7,7 @@ import {
   Star,
   ShieldCheck,
   Wand2,
+  Code2,
 } from 'lucide-react'
 import { MarketingNav } from '@/components/marketing-nav'
 import { MarketingFooter } from '@/components/marketing-footer'
@@ -239,6 +240,29 @@ export default function LandingPage() {
               Create your beauty profile <ArrowRight className="size-4" />
             </ButtonLink>
           </div>
+        </section>
+        {/* Developer CTA */}
+        <section className="mx-auto max-w-6xl px-4 pb-20 md:px-8">
+          <Link
+            href="/integration-guide"
+            className="group flex flex-col items-center justify-between gap-6 rounded-2xl border bg-secondary/40 px-6 py-8 text-center transition-colors hover:border-primary/40 sm:flex-row sm:text-left md:px-10"
+          >
+            <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-start sm:gap-4">
+              <span className="grid size-11 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
+                <Code2 className="size-5" />
+              </span>
+              <div>
+                <h3 className="font-medium">Building your own beauty brand?</h3>
+                <p className="mt-1 max-w-md text-sm text-muted-foreground">
+                  Lumière runs on the public GetMyShade API. See our integration guide to add
+                  AI-powered shade matching to your own store.
+                </p>
+              </div>
+            </div>
+            <span className="inline-flex h-10 shrink-0 items-center gap-2 rounded-full border bg-card px-4 text-sm font-medium transition-transform group-hover:translate-x-0.5">
+              View integration guide <ArrowRight className="size-4" />
+            </span>
+          </Link>
         </section>
       </main>
 
