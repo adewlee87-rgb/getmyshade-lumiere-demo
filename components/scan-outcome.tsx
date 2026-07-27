@@ -219,8 +219,10 @@ export function ScanOutcome({ flow, onFullReset }: { flow: ScanFlow; onFullReset
                       </div>
                     </div>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Badge variant="secondary">score {m.match_score.toFixed(1)}</Badge>
-                      <span>ΔE {m.delta_e.toFixed(2)}</span>
+                      {m.match_score != null && (
+                        <Badge variant="secondary">score {m.match_score.toFixed(1)}</Badge>
+                      )}
+                      {m.delta_e != null && <span>ΔE {m.delta_e.toFixed(2)}</span>}
                     </div>
                     <div className="flex items-center justify-between gap-2 pt-1">
                       {local && (

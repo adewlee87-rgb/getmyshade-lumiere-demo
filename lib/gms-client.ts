@@ -127,8 +127,8 @@ export type GmsMatch = {
   sku: string
   hex_value: string
   image_url?: string
-  match_score: number
-  delta_e: number
+  match_score: number | null
+  delta_e: number | null
 }
 
 export type MatchResponse = {
