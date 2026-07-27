@@ -21,6 +21,8 @@ import { getProductByShadeSku, formatPrice } from '@/lib/data'
 import { GmsError } from '@/lib/gms-client'
 import type { ScanFlow } from '@/lib/use-scan-flow'
 
+const LOW_CONFIDENCE_THRESHOLD = 0.7
+
 const KEY_SETUP_CODES = new Set([
   'MISSING_API_KEY',
   'INVALID_KEY_FORMAT',
@@ -104,6 +106,7 @@ export function ScanOutcome({ flow, onFullReset }: { flow: ScanFlow; onFullReset
 
   if (phase === 'success' && result) {
     const { analysis, matches } = result.data
+    const lowConfidence = analysis.confidence_score < LOW_CONFIDENCE_THRESHOLD
     return (
       <div className="space-y-8">
         <Card className="overflow-hidden">
@@ -116,10 +119,22 @@ export function ScanOutcome({ flow, onFullReset }: { flow: ScanFlow; onFullReset
             <div className="flex-1 space-y-3">
               <div className="flex flex-wrap items-center gap-2">
                 <h2 className="font-serif text-2xl">Your scan is in</h2>
-                <Badge variant="success">
+                <Badge variant={lowConfidence ? 'warning' : 'success'}>
                   {Math.round(analysis.confidence_score * 100)}% confidence
                 </Badge>
               </div>
+              {lowConfidence && (
+                <div className="flex items-start gap-2 rounded-lg border border-amber-300/60 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-900/50 dark:bg-amber-950 dark:text-amber-300">
+                  <AlertTriangle className="mt-0.5 size-4 shrink-0" />
+                  <p>
+                    This scan came back low-confidence — usually caused by dim or uneven
+                    lighting. Your matches below may be less accurate. For a better result: retake
+                    in bright, even natural light facing you (not behind you), avoid backlighting
+                    from windows or lamps, and keep your face centered and unobstructed (no
+                    glasses, hats, or heavy shadows).
+                  </p>
+                </div>
+              )}
               <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
                 {[
                   ['Skin tone', analysis.skin_tone],
@@ -219,8 +234,10 @@ export function ScanOutcome({ flow, onFullReset }: { flow: ScanFlow; onFullReset
                       </div>
                     </div>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      {m.match_score != null && (
+                      {m.match_score != null ? (
                         <Badge variant="secondary">score {m.match_score.toFixed(1)}</Badge>
+                      ) : (
+                        <Badge variant="warning">low-confidence match</Badge>
                       )}
                       {m.delta_e != null && <span>ΔE {m.delta_e.toFixed(2)}</span>}
                     </div>

@@ -5,6 +5,7 @@ import { Camera, CircleDot, RefreshCw, AlertTriangle, Check, Loader2 } from 'luc
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { ScanOutcome } from '@/components/scan-outcome'
+import { ScanTips } from '@/components/scan-tips'
 import { useScanFlow } from '@/lib/use-scan-flow'
 import { cn } from '@/lib/utils'
 
@@ -119,127 +120,131 @@ export function LiveScanPanel() {
   const allCaptured = captures.every(Boolean)
 
   return (
-    <Card className="mx-auto max-w-xl">
-      <CardContent className="space-y-5 py-8">
-        {!allCaptured ? (
-          <>
-            <div className="relative mx-auto aspect-square w-full max-w-sm overflow-hidden rounded-2xl bg-muted">
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                muted
-                className={cn(
-                  'size-full scale-x-[-1] object-cover',
-                  cameraState !== 'live' && 'hidden',
-                )}
-              />
-              {cameraState === 'live' && (
-                <div className="pointer-events-none absolute inset-6 rounded-[45%] border-2 border-dashed border-white/70" />
-              )}
-              {cameraState !== 'live' && (
-                <div className="flex size-full flex-col items-center justify-center gap-3 p-6 text-center">
-                  {cameraState === 'denied' ? (
-                    <>
-                      <AlertTriangle className="size-8 text-destructive" />
-                      <p className="text-sm text-muted-foreground">
-                        Camera access was denied. Allow camera permission for this site in your
-                        browser and try again.
-                      </p>
-                    </>
-                  ) : cameraState === 'unsupported' ? (
-                    <>
-                      <AlertTriangle className="size-8 text-muted-foreground" />
-                      <p className="text-sm text-muted-foreground">
-                        Your browser doesn't support camera capture here. Try the Upload Photo tab
-                        instead.
-                      </p>
-                    </>
-                  ) : cameraState === 'requesting' ? (
-                    <>
-                      <Loader2 className="size-8 animate-spin text-muted-foreground" />
-                      <p className="text-sm text-muted-foreground">Requesting camera access…</p>
-                    </>
-                  ) : (
-                    <>
-                      <Camera className="size-8 text-muted-foreground" />
-                      <p className="text-sm text-muted-foreground">
-                        We'll guide you through a 3-step live scan: straight, left, right.
-                      </p>
-                    </>
+    <>
+      <ScanTips />
+      <Card className="mx-auto max-w-xl">
+        <CardContent className="space-y-5 py-8">
+          {!allCaptured ? (
+            <>
+              <div className="relative mx-auto aspect-square w-full max-w-sm overflow-hidden rounded-2xl bg-muted">
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  playsInline
+                  muted
+                  className={cn(
+                    'size-full scale-x-[-1] object-cover',
+                    cameraState !== 'live' && 'hidden',
                   )}
-                </div>
-              )}
-            </div>
-
-            {cameraState === 'live' ? (
-              <div className="space-y-3 text-center">
-                <div className="flex items-center justify-center gap-1.5">
-                  {steps.map((_, i) => (
-                    <span
-                      key={i}
-                      className={cn(
-                        'size-2 rounded-full transition-colors',
-                        captures[i]
-                          ? 'bg-primary'
-                          : i === stepIndex
-                            ? 'bg-primary/50'
-                            : 'bg-muted-foreground/30',
-                      )}
-                    />
-                  ))}
-                </div>
-                <p className="font-serif text-xl">{steps[stepIndex].title}</p>
-                <p className="text-sm text-muted-foreground">{steps[stepIndex].instruction}</p>
-                <Button size="lg" onClick={captureFrame}>
-                  <CircleDot className="size-4" /> Capture step {stepIndex + 1} of {steps.length}
-                </Button>
-              </div>
-            ) : (
-              <Button
-                className="w-full justify-center"
-                size="lg"
-                onClick={startCamera}
-                disabled={cameraState === 'requesting' || cameraState === 'unsupported'}
-              >
-                <Camera className="size-4" /> Turn on camera
-              </Button>
-            )}
-          </>
-        ) : (
-          <>
-            <div className="grid grid-cols-3 gap-3">
-              {captures.map((c, i) => (
-                <div key={i} className="space-y-1.5 text-center">
-                  <div className="aspect-square overflow-hidden rounded-xl bg-muted">
-                    {c && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={c} alt={steps[i].title} className="size-full object-cover" />
+                />
+                {cameraState === 'live' && (
+                  <div className="pointer-events-none absolute inset-6 rounded-[45%] border-2 border-dashed border-white/70" />
+                )}
+                {cameraState !== 'live' && (
+                  <div className="flex size-full flex-col items-center justify-center gap-3 p-6 text-center">
+                    {cameraState === 'denied' ? (
+                      <>
+                        <AlertTriangle className="size-8 text-destructive" />
+                        <p className="text-sm text-muted-foreground">
+                          Camera access was denied. Allow camera permission for this site in your
+                          browser and try again.
+                        </p>
+                      </>
+                    ) : cameraState === 'unsupported' ? (
+                      <>
+                        <AlertTriangle className="size-8 text-muted-foreground" />
+                        <p className="text-sm text-muted-foreground">
+                          Your browser doesn't support camera capture here. Try the Upload Photo
+                          tab instead.
+                        </p>
+                      </>
+                    ) : cameraState === 'requesting' ? (
+                      <>
+                        <Loader2 className="size-8 animate-spin text-muted-foreground" />
+                        <p className="text-sm text-muted-foreground">Requesting camera access…</p>
+                      </>
+                    ) : (
+                      <>
+                        <Camera className="size-8 text-muted-foreground" />
+                        <p className="text-sm text-muted-foreground">
+                          We'll guide you through a 3-step live scan: straight, left, right.
+                        </p>
+                      </>
                     )}
                   </div>
-                  <p className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
-                    <Check className="size-3 text-primary" /> {steps[i].title}
-                  </p>
+                )}
+              </div>
+
+              {cameraState === 'live' ? (
+                <div className="space-y-3 text-center">
+                  <div className="flex items-center justify-center gap-1.5">
+                    {steps.map((_, i) => (
+                      <span
+                        key={i}
+                        className={cn(
+                          'size-2 rounded-full transition-colors',
+                          captures[i]
+                            ? 'bg-primary'
+                            : i === stepIndex
+                              ? 'bg-primary/50'
+                              : 'bg-muted-foreground/30',
+                        )}
+                      />
+                    ))}
+                  </div>
+                  <p className="font-serif text-xl">{steps[stepIndex].title}</p>
+                  <p className="text-sm text-muted-foreground">{steps[stepIndex].instruction}</p>
+                  <Button size="lg" onClick={captureFrame}>
+                    <CircleDot className="size-4" /> Capture step {stepIndex + 1} of{' '}
+                    {steps.length}
+                  </Button>
                 </div>
-              ))}
-            </div>
-            <div className="flex items-center gap-3">
-              <Button variant="outline" onClick={retakeAll}>
-                <RefreshCw className="size-4" /> Retake
-              </Button>
-              <Button className="flex-1 justify-center" size="lg" onClick={handleAnalyze}>
-                Analyze with GetMyShade API
-              </Button>
-            </div>
-            <p className="text-center text-xs text-muted-foreground">
-              Your straight-on capture is sent to{' '}
-              <span className="font-mono">POST /api-v1-match</span>. The two turns just help
-              confirm a genuine live capture.
-            </p>
-          </>
-        )}
-        <canvas ref={canvasRef} className="hidden" />
-      </CardContent>
-    </Card>
+              ) : (
+                <Button
+                  className="w-full justify-center"
+                  size="lg"
+                  onClick={startCamera}
+                  disabled={cameraState === 'requesting' || cameraState === 'unsupported'}
+                >
+                  <Camera className="size-4" /> Turn on camera
+                </Button>
+              )}
+            </>
+          ) : (
+            <>
+              <div className="grid grid-cols-3 gap-3">
+                {captures.map((c, i) => (
+                  <div key={i} className="space-y-1.5 text-center">
+                    <div className="aspect-square overflow-hidden rounded-xl bg-muted">
+                      {c && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={c} alt={steps[i].title} className="size-full object-cover" />
+                      )}
+                    </div>
+                    <p className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
+                      <Check className="size-3 text-primary" /> {steps[i].title}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              <div className="flex items-center gap-3">
+                <Button variant="outline" onClick={retakeAll}>
+                  <RefreshCw className="size-4" /> Retake
+                </Button>
+                <Button className="flex-1 justify-center" size="lg" onClick={handleAnalyze}>
+                  Analyze with GetMyShade API
+                </Button>
+              </div>
+              <p className="text-center text-xs text-muted-foreground">
+                Your straight-on capture is sent to{' '}
+                <span className="font-mono">POST /api-v1-match</span>. The two turns just help
+                confirm a genuine live capture.
+              </p>
+            </>
+          )}
+          <canvas ref={canvasRef} className="hidden" />
+        </CardContent>
+      </Card>
+    </>
   )
 }
