@@ -29,7 +29,7 @@ export function AuthShell({
               “I finally found my exact foundation shade on the first try.”
             </p>
             <p className="mt-3 text-sm text-primary-foreground/80">
-              Maya T. · matched to Light Medium 5N
+              Maya T. · matched to Light Medium 9N
             </p>
             <div className="mt-6 flex items-center gap-6 text-sm text-primary-foreground/90">
               <span className="flex items-center gap-1.5">

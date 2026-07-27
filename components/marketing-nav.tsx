@@ -11,6 +11,7 @@ const links = [
   { href: '/catalog', label: 'Shop' },
   { href: '/collections', label: 'Collections' },
   { href: '/education', label: 'Beauty School' },
+  { href: '/integration-guide', label: 'Developers' },
 ]
 
 export function MarketingNav() {

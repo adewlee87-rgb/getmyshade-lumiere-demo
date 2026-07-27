@@ -71,11 +71,13 @@ function rgbToHex(r: number, g: number, b: number) {
   return `#${[r, g, b].map((v) => clampChannel(v).toString(16).padStart(2, '0')).join('')}`
 }
 
-/** Shifts a base tone warmer (more red/yellow) or cooler (more pink/blue). */
-function tintHex(hex: string, undertone: Shade['undertone']) {
+/** Shifts a base tone warmer (more red/yellow) or cooler (more pink/blue).
+ * `strength` varies per generated shade so neighboring shades aren't spaced
+ * with mathematically perfect, unrealistic evenness. */
+function tintHex(hex: string, undertone: Shade['undertone'], strength = 1) {
   const { r, g, b } = hexToRgb(hex)
-  if (undertone === 'Warm') return rgbToHex(r + 8, g + 3, b - 12)
-  if (undertone === 'Cool') return rgbToHex(r - 6, g - 1, b + 10)
+  if (undertone === 'Warm') return rgbToHex(r + 8 * strength, g + 3 * strength, b - 12 * strength)
+  if (undertone === 'Cool') return rgbToHex(r - 6 * strength, g - 1 * strength, b + 10 * strength)
   return hex
 }
 
@@ -85,11 +87,30 @@ function shiftLightness(hex: string, amount: number) {
   return rgbToHex(r + amount, g + amount, b + amount)
 }
 
-const undertoneOrder: Shade['undertone'][] = ['Cool', 'Neutral', 'Warm']
+function lerpHex(hexA: string, hexB: string, t: number) {
+  const a = hexToRgb(hexA)
+  const b = hexToRgb(hexB)
+  return rgbToHex(a.r + (b.r - a.r) * t, a.g + (b.g - a.g) * t, a.b + (b.b - a.b) * t)
+}
+
+// Deterministic PRNG (fixed seed) so the "organic" irregularity below is
+// stable across builds — this data gets synced to the live GetMyShade
+// catalog by SKU, so it can't reshuffle every time the site rebuilds.
+function mulberry32(seed: number) {
+  return function () {
+    seed |= 0
+    seed = (seed + 0x6d2b79f5) | 0
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed)
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+const rng = mulberry32(20260714)
+
 const undertoneCode: Record<Shade['undertone'], string> = { Cool: 'C', Neutral: 'N', Warm: 'W' }
 
-// 12 depth stops from the fairest to the deepest skin tones.
-const depthStops: { label: string; hex: string }[] = [
+// 12 anchor tones from fairest to deepest.
+const depthAnchors: { label: string; hex: string }[] = [
   { label: 'Porcelain', hex: '#fbe3d0' },
   { label: 'Ivory', hex: '#f6d8bb' },
   { label: 'Alabaster', hex: '#f0cca8' },
@@ -104,31 +125,60 @@ const depthStops: { label: string; hex: string }[] = [
   { label: 'Deep Ebony', hex: '#3f2416' },
 ]
 
-// 12 depths × 3 undertones = 36 shades — foundation and concealer both need
-// this breadth since they're the products GetMyShade actually shade-matches.
-const foundationShades: Shade[] = depthStops.flatMap((stop, i) =>
-  undertoneOrder.map((undertone) => ({
+// Real shade fans aren't a perfectly even grid — interpolate to a finer,
+// slightly jittered 20-stop scale so matching gets tested against realistic
+// density and noise instead of a mathematically uniform gradient.
+const depthStops: { label: string; hex: string }[] = Array.from({ length: 20 }, (_, i) => {
+  const segment = (i / 19) * (depthAnchors.length - 1)
+  const lo = Math.floor(segment)
+  const hi = Math.min(lo + 1, depthAnchors.length - 1)
+  const localT = segment - lo
+  const base = lerpHex(depthAnchors[lo].hex, depthAnchors[hi].hex, localT)
+  const { r, g, b } = hexToRgb(base)
+  const jitter = () => Math.round((rng() - 0.5) * 6)
+  return {
+    label: (localT < 0.5 ? depthAnchors[lo] : depthAnchors[hi]).label,
+    hex: rgbToHex(r + jitter(), g + jitter(), b + jitter()),
+  }
+})
+
+/** Real ranges don't offer all 3 undertones at every depth — the most
+ * common mid-range depths get full Cool/Neutral/Warm coverage, while the
+ * lightest and deepest few stops (lower real-world demand, historically
+ * under-invested in by most brands) get a narrower 2-undertone selection. */
+function undertonesForDepth(depthT: number): Shade['undertone'][] {
+  if (depthT > 0.1 && depthT < 0.9) return ['Cool', 'Neutral', 'Warm']
+  return rng() > 0.5 ? ['Neutral', 'Warm'] : ['Neutral', 'Cool']
+}
+
+// Foundation and concealer are the products GetMyShade actually shade-matches
+// most heavily, so they need real breadth — roughly 45-50 shades each,
+// unevenly spaced like an actual inclusive range rather than a clean grid.
+const foundationShades: Shade[] = depthStops.flatMap((stop, i) => {
+  const depthT = i / (depthStops.length - 1)
+  return undertonesForDepth(depthT).map((undertone) => ({
     name: `${stop.label} ${i + 1}${undertoneCode[undertone]}`,
-    hex: tintHex(stop.hex, undertone),
+    hex: tintHex(stop.hex, undertone, 0.75 + rng() * 0.5),
     undertone,
-  })),
-)
+  }))
+})
 
 // Concealer mirrors the foundation range, lightened a touch (the classic
-// "one shade lighter, for a lifted look" formulation called out below).
-const concealerShades: Shade[] = depthStops.flatMap((stop, i) =>
-  undertoneOrder.map((undertone) => ({
+// "one shade lighter, for a lifted look" formulation), with its own jitter.
+const concealerShades: Shade[] = depthStops.flatMap((stop, i) => {
+  const depthT = i / (depthStops.length - 1)
+  return undertonesForDepth(depthT).map((undertone) => ({
     name: `${stop.label} ${i + 1}${undertoneCode[undertone]}`,
-    hex: shiftLightness(tintHex(stop.hex, undertone), 12),
+    hex: shiftLightness(tintHex(stop.hex, undertone, 0.75 + rng() * 0.5), 9 + rng() * 6),
     undertone,
-  })),
-)
+  }))
+})
 
 // Contour needs to read as a believable shadow on the wearer's own depth, so
-// it spans the same 12 stops, cooled and darkened rather than warmed.
+// it spans the same 20 stops, cooled and darkened rather than warmed.
 const contourShades: Shade[] = depthStops.map((stop, i) => ({
   name: `${stop.label} Sculpt ${i + 1}`,
-  hex: tintHex(shiftLightness(stop.hex, -20), 'Cool'),
+  hex: tintHex(shiftLightness(stop.hex, -18 - rng() * 4), 'Cool', 0.85 + rng() * 0.3),
   undertone: 'Cool',
 }))
 
@@ -144,12 +194,17 @@ const powderShades: Shade[] = [
   { name: 'Rich Deep', hex: '#4f331b', undertone: 'Warm' },
 ]
 
+// Widened to cover deep skin tones too (the original 5 skewed light-medium
+// and left no genuine match for deeper complexions during live testing).
 const highlighterShades: Shade[] = [
   { name: 'Champagne', hex: '#e8c98f', undertone: 'Warm' },
   { name: 'Rose Gold', hex: '#e0a98f', undertone: 'Warm' },
   { name: 'Pearl', hex: '#edd7c4', undertone: 'Cool' },
   { name: 'Bronze Glow', hex: '#c98f5c', undertone: 'Warm' },
   { name: 'Moonlight', hex: '#e6e0d6', undertone: 'Neutral' },
+  { name: 'Golden Bronze', hex: '#a97544', undertone: 'Warm' },
+  { name: 'Copper Glow', hex: '#8a5636', undertone: 'Warm' },
+  { name: 'Amber Lit', hex: '#6b4128', undertone: 'Neutral' },
 ]
 
 const lipShades: Shade[] = [
@@ -189,7 +244,7 @@ export const products: Product[] = [
     bestFor: ['Normal to dry skin', 'Redness', 'Uneven tone'],
     matched: true,
     matchReason:
-      'Matched to your Warm undertone and Combination skin type. Shade Light Medium 5W aligns with your analyzed skin tone.',
+      'Matched to your Warm undertone and Combination skin type. Shade Light Medium 9W aligns with your analyzed skin tone.',
     tags: ['Bestseller', 'Vegan'],
   },
   {
@@ -462,7 +517,7 @@ export const beautyProfile: BeautyProfile = {
   faceShape: 'Oval',
   concerns: ['Under-eye circles', 'T-zone shine', 'Uneven tone'],
   confidence: 94,
-  recommendedShade: 'Light Medium 5W',
+  recommendedShade: 'Light Medium 9W',
   lastAnalyzed: 'Feb 14, 2026',
 }
 
@@ -531,8 +586,8 @@ export const orders: Order[] = [
     status: 'Delivered',
     total: 104,
     items: [
-      { productId: 'lumiere-silk-foundation', qty: 1, shade: 'Light Medium 5W' },
-      { productId: 'lumiere-radiant-concealer', qty: 1, shade: 'Light Medium 5N' },
+      { productId: 'lumiere-silk-foundation', qty: 1, shade: 'Light Medium 9W' },
+      { productId: 'lumiere-radiant-concealer', qty: 1, shade: 'Light Medium 9N' },
       { productId: 'lumiere-cheek-blush', qty: 1, shade: 'Peach Bloom' },
     ],
   },

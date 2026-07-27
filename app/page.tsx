@@ -91,7 +91,7 @@ export default function LandingPage() {
                 <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                   Your Match
                 </p>
-                <p className="font-serif text-lg">Light Medium 5W · Warm</p>
+                <p className="font-serif text-lg">Light Medium 9W · Warm</p>
                 <div className="mt-1 flex items-center gap-2">
                   <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
                     <div className="h-full w-[94%] rounded-full bg-primary" />
