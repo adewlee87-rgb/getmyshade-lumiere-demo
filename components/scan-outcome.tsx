@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
 import {
   Loader2,
   RefreshCw,
@@ -9,8 +8,6 @@ import {
   Sparkles,
   ShoppingBag,
   Eye,
-  ChevronDown,
-  ChevronUp,
   Minus,
   Plus,
 } from 'lucide-react'
@@ -39,9 +36,8 @@ const KEY_SETUP_CODES = new Set([
  * needs clearing too — the hook only knows about the API call itself.
  */
 export function ScanOutcome({ flow, onFullReset }: { flow: ScanFlow; onFullReset: () => void }) {
-  const [showRaw, setShowRaw] = useState(false)
   const [qtyBySku, setQtyBySku] = useState<Record<string, number>>({})
-  const { phase, result, error, sessionId, addedSkus, handleAddToBag, logEvent, retry } = flow
+  const { phase, result, error, addedSkus, handleAddToBag, logEvent, retry } = flow
 
   const qtyFor = (sku: string) => qtyBySku[sku] ?? 1
   const adjustQty = (sku: string, delta: number) =>
@@ -53,9 +49,9 @@ export function ScanOutcome({ flow, onFullReset }: { flow: ScanFlow; onFullReset
         <CardContent className="flex flex-col items-center gap-4 py-16 text-center">
           <Loader2 className="size-8 animate-spin text-primary" />
           <div className="space-y-1">
-            <h2 className="font-serif text-2xl">Calling the GetMyShade API</h2>
+            <h2 className="font-serif text-2xl">Analyzing your skin</h2>
             <p className="text-sm text-muted-foreground">
-              POST /api-v1-match · typical latency ~1.8s
+              Reading your tone and undertone to find your match…
             </p>
           </div>
         </CardContent>
@@ -148,46 +144,28 @@ export function ScanOutcome({ flow, onFullReset }: { flow: ScanFlow; onFullReset
                   </div>
                 ))}
               </div>
-              <p className="font-mono text-xs text-muted-foreground">
-                session {result.meta.session_id ?? sessionId} · {result.meta.processing_time_ms}ms ·
-                api {result.meta.api_version}
-              </p>
-              <button
-                type="button"
-                onClick={() => setShowRaw((s) => !s)}
-                className="flex items-center gap-1 text-xs text-primary hover:underline"
-              >
-                {showRaw ? <ChevronUp className="size-3" /> : <ChevronDown className="size-3" />}
-                {showRaw ? 'Hide' : 'View'} raw response
-              </button>
-              {showRaw && (
-                <pre className="max-h-64 overflow-auto rounded-lg border bg-muted/50 p-3 text-xs">
-                  {JSON.stringify(result, null, 2)}
-                </pre>
-              )}
             </div>
           </CardContent>
         </Card>
 
         <div>
           <div className="mb-4 flex items-center justify-between">
-            <h3 className="font-serif text-xl">Ranked shade matches</h3>
+            <h3 className="font-serif text-xl">Your shade matches</h3>
             <Button variant="outline" size="sm" onClick={onFullReset}>
               <RefreshCw className="size-4" /> Scan again
             </Button>
           </div>
 
           {result.meta.no_match_product_types && result.meta.no_match_product_types.length > 0 && (
-            <div className="mb-4 flex items-start gap-2 rounded-lg border border-amber-300/60 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+            <div className="mb-4 flex items-start gap-2 rounded-lg border border-amber-300/60 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-900/50 dark:bg-amber-950 dark:text-amber-300">
               <AlertTriangle className="mt-0.5 size-4 shrink-0" />
               <p>
-                No match found for{' '}
+                We couldn't find a close enough match for{' '}
                 {result.meta.no_match_product_types
                   .map((t) => t.charAt(0).toUpperCase() + t.slice(1))
-                  .join(', ')}
-                . None of the shades we have for{' '}
-                {result.meta.no_match_product_types.length > 1 ? 'these categories' : 'this category'}{' '}
-                are close enough to your scanned tone yet.
+                  .join(', ')}{' '}
+                for your tone just yet. We're always expanding our range — check back soon, or try
+                scanning again in bright, even light.
               </p>
             </div>
           )}
@@ -197,12 +175,12 @@ export function ScanOutcome({ flow, onFullReset }: { flow: ScanFlow; onFullReset
               <CardContent className="flex flex-col items-center gap-3 py-10 text-center">
                 <Sparkles className="size-6 text-muted-foreground" />
                 <p className="max-w-sm text-sm text-muted-foreground">
-                  Your GetMyShade catalog is empty, so there's nothing to rank yet. Seed it from{' '}
-                  <Link href="/settings" className="text-primary hover:underline">
-                    Settings → Developer
-                  </Link>
-                  , then scan again.
+                  We couldn't find a shade match for your tone right now. Try scanning again in
+                  bright, even light — and check back soon as we're always adding new shades.
                 </p>
+                <Button variant="outline" size="sm" onClick={onFullReset}>
+                  <RefreshCw className="size-4" /> Scan again
+                </Button>
               </CardContent>
             </Card>
           ) : (
@@ -223,24 +201,23 @@ export function ScanOutcome({ flow, onFullReset }: { flow: ScanFlow; onFullReset
                     </div>
                     <div className="flex items-center gap-3">
                       <span
-                        className="size-10 shrink-0 rounded-full ring-1 ring-black/10"
+                        className="size-11 shrink-0 rounded-full ring-1 ring-black/10"
                         style={{ backgroundColor: m.hex_value }}
+                        title={m.hex_value}
                       />
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium">{m.shade_name}</p>
-                        <p className="truncate text-xs text-muted-foreground">
-                          {m.product_name} · {m.sku}
+                        <p className="truncate text-xs uppercase tracking-wide text-muted-foreground">
+                          Your shade
                         </p>
+                        <p className="truncate font-medium">{m.shade_name}</p>
+                        <p className="truncate text-xs text-muted-foreground">{m.product_name}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      {m.match_score != null ? (
-                        <Badge variant="secondary">score {m.match_score.toFixed(1)}</Badge>
-                      ) : (
-                        <Badge variant="warning">low-confidence match</Badge>
-                      )}
-                      {m.delta_e != null && <span>ΔE {m.delta_e.toFixed(2)}</span>}
-                    </div>
+                    {m.match_score == null && (
+                      <p className="text-xs text-muted-foreground">
+                        Your closest match — rescan in brighter light for a more precise result.
+                      </p>
+                    )}
                     <div className="flex items-center justify-between gap-2 pt-1">
                       {local && (
                         <span className="text-sm font-serif">{formatPrice(local.product.price)}</span>

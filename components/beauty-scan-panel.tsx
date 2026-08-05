@@ -88,10 +88,10 @@ export function BeautyScanPanel() {
 
           <div className="flex items-center justify-between gap-3">
             <p className="text-xs text-muted-foreground">
-              Sent directly to <span className="font-mono">POST /api-v1-match</span>
+              Your photo is analyzed privately to find your shade.
             </p>
             <Button onClick={runScan} disabled={!file}>
-              <Sparkles className="size-4" /> Analyze My Skin
+              <Sparkles className="size-4" /> Find my shade
             </Button>
           </div>
         </CardContent>

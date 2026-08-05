@@ -2,7 +2,6 @@ import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import { Inter, Fraunces } from 'next/font/google'
 import { StoreProvider } from '@/components/store-provider'
-import { GmsTestBanner } from '@/components/gms-test-banner'
 import './globals.css'
 
 const inter = Inter({
@@ -18,9 +17,9 @@ const fraunces = Fraunces({
 })
 
 export const metadata: Metadata = {
-  title: 'GetMyShade API Test Website — Lumière AI Beauty Match',
+  title: 'Lumière — Beauty Matched to Your Skin',
   description:
-    'A dummy beauty-brand storefront built to test the real GetMyShade facial-analysis API. Discover foundations, shades, and complexion products matched to your unique skin.',
+    'Lumière analyzes your complexion and curates foundations, shades, and finishing products chosen for your unique tone, undertone, and skin type.',
   generator: 'v0.app',
 }
 
@@ -36,8 +35,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${fraunces.variable} bg-background`}>
-      <body className="pt-9 font-sans antialiased">
-        <GmsTestBanner />
+      <body className="font-sans antialiased">
         <StoreProvider>{children}</StoreProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>

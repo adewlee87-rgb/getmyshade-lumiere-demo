@@ -472,6 +472,30 @@ const categoryToGmsType: Record<Category, GmsProductType> = {
   Tools: 'other',
 }
 
+// GetMyShade only shade-matches true complexion products. Everything else
+// (lipstick, primer, setting spray, powder, blush, tools) still lives in the
+// brand's own catalog and storefront — it just never gets pushed to the match
+// API, so a scan can't come back recommending a lipstick or a primer as a
+// "shade match". Scope confirmed with the client, Aug 2026.
+export const gmsMatchableCategories = new Set<Category>([
+  'Foundation',
+  'Concealer',
+  'Highlighter',
+  'Contour',
+])
+
+export function isGmsMatchable(category: Category) {
+  return gmsMatchableCategories.has(category)
+}
+
+// The GetMyShade product_type values that correspond to the matchable
+// categories above. Note 'Highlighter' maps to 'other', so 'other' is allowed
+// here — the category-level filter on the sync payload is what keeps primer /
+// setting spray / tools (also 'other') out of the match catalog.
+export const gmsMatchableProductTypes = new Set<GmsProductType>(
+  [...gmsMatchableCategories].map((c) => categoryToGmsType[c]),
+)
+
 export type GmsCatalogProduct = {
   product_name: string
   product_type: GmsProductType
@@ -485,7 +509,7 @@ export type GmsCatalogProduct = {
 
 export function toGmsCatalogPayload(): GmsCatalogProduct[] {
   return products
-    .filter((p) => p.shades.length > 0)
+    .filter((p) => p.shades.length > 0 && gmsMatchableCategories.has(p.category))
     .map((p) => ({
       product_name: p.name,
       product_type: categoryToGmsType[p.category],

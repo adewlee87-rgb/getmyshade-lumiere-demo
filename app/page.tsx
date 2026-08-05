@@ -24,8 +24,8 @@ const steps = [
   },
   {
     icon: Wand2,
-    title: 'AI analyzes your skin',
-    desc: 'Our external Beauty Analysis API reads tone, undertone, type, and face shape.',
+    title: 'We analyze your skin',
+    desc: 'Our precision skin analysis reads tone, undertone, type, and face shape.',
   },
   {
     icon: Sparkles,
@@ -52,7 +52,7 @@ export default function LandingPage() {
           <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 md:grid-cols-2 md:px-8 md:py-24">
             <div className="flex flex-col items-start gap-6">
               <Badge variant="accent" className="gap-1.5 px-3 py-1">
-                <Sparkles className="size-3.5" /> AI-Powered Beauty Matching
+                <Sparkles className="size-3.5" /> Precision Beauty Matching
               </Badge>
               <h1 className="text-balance font-serif text-5xl leading-[1.05] tracking-tight md:text-6xl">
                 Beauty matched to <em className="italic text-primary">your</em> skin, precisely.
@@ -111,13 +111,13 @@ export default function LandingPage() {
             className="group relative flex flex-col items-center gap-4 overflow-hidden rounded-3xl border bg-card px-6 py-12 text-center transition-colors hover:border-primary/40 md:px-16 md:py-16"
           >
             <Badge variant="accent" className="gap-1.5 px-3 py-1">
-              <Sparkles className="size-3.5" /> Find My Shade — Powered by GetMyShade
+              <Sparkles className="size-3.5" /> Find My Shade
             </Badge>
             <h2 className="text-balance font-serif text-3xl tracking-tight md:text-4xl">
               Scan your skin, find your shade
             </h2>
             <p className="max-w-md text-pretty text-muted-foreground">
-              Jump straight into a live scan or upload a selfie for an instant AI-powered
+              Jump straight into a live scan or upload a selfie for an instant, precision
               shade match.
             </p>
             <span className="mt-2 inline-flex h-11 items-center gap-2 rounded-full bg-primary px-5 text-base font-medium text-primary-foreground transition-transform group-hover:translate-x-0.5">
@@ -255,7 +255,7 @@ export default function LandingPage() {
                 <h3 className="font-medium">Building your own beauty brand?</h3>
                 <p className="mt-1 max-w-md text-sm text-muted-foreground">
                   Lumière runs on the public GetMyShade API. See our integration guide to add
-                  AI-powered shade matching to your own store.
+                  precision shade matching to your own store.
                 </p>
               </div>
             </div>

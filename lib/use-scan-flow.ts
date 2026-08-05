@@ -2,10 +2,29 @@
 
 import { useCallback, useState } from 'react'
 import { useStore } from '@/components/store-provider'
-import { getProductByShadeSku, priceForProductType } from '@/lib/data'
+import { getProductByShadeSku, priceForProductType, gmsMatchableProductTypes } from '@/lib/data'
 import { gms, GmsError, newSessionId, type MatchResponse, type GmsMatch } from '@/lib/gms-client'
 
 export type ScanPhase = 'idle' | 'scanning' | 'success' | 'error'
+
+/**
+ * Keeps a raw /api-v1-match response from ever surfacing a product type the
+ * brand doesn't shade-match. The live catalog may still hold legacy products
+ * (lipstick, primer, etc.) until it's re-seeded, so we also filter here rather
+ * than trusting the server to only return matchable types. See
+ * gmsMatchableProductTypes in lib/data.ts.
+ */
+function sanitizeMatchResponse(res: MatchResponse): MatchResponse {
+  const matches = res.data.matches.filter((m) => gmsMatchableProductTypes.has(m.product_type as never))
+  const no_match_product_types = res.meta.no_match_product_types?.filter((t) =>
+    gmsMatchableProductTypes.has(t as never),
+  )
+  return {
+    ...res,
+    data: { ...res.data, matches },
+    meta: { ...res.meta, no_match_product_types },
+  }
+}
 
 /**
  * Shared state machine for anything that submits a face image to
@@ -30,7 +49,7 @@ export function useScanFlow() {
       const sid = newSessionId()
       setSessionId(sid)
       const res = await gms.match(image, sid)
-      setResult(res)
+      setResult(sanitizeMatchResponse(res))
       setPhase('success')
     } catch (e) {
       setError(e instanceof GmsError ? e : e instanceof Error ? e : new Error(String(e)))

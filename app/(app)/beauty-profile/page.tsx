@@ -16,7 +16,7 @@ const attributes = [
 
 const scanHistory = [
   { date: beautyProfile.lastAnalyzed, confidence: beautyProfile.confidence, source: 'Guided quiz' },
-  { date: 'Nov 3, 2025', confidence: 91, source: 'Guided quiz' },
+  { date: 'Feb 3, 2026', confidence: 91, source: 'Guided quiz' },
 ]
 
 export default function BeautyProfilePage() {

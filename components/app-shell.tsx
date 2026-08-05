@@ -26,12 +26,12 @@ import { Button, ButtonLink } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { useStore } from '@/components/store-provider'
-import { BrandLogo } from '@/components/brand-logo'
+import { BrandLogo, GetMyShadeMark } from '@/components/brand-logo'
 
 const nav = [
   { section: 'Discover', items: [
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/match', label: 'AI Beauty Match', icon: Wand2 },
+    { href: '/match', label: 'Beauty Match', icon: Wand2 },
     { href: '/recommendations', label: 'For You', icon: Sparkles },
   ]},
   { section: 'Shop', items: [
@@ -89,6 +89,14 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
           })}
         </div>
       ))}
+      <Link
+        href="/integration-guide"
+        onClick={onNavigate}
+        className="mt-auto flex items-center gap-2 rounded-lg px-3 py-2 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+      >
+        <GetMyShadeMark className="size-4" />
+        Powered by GetMyShade
+      </Link>
     </nav>
   )
 }
@@ -100,7 +108,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-svh bg-background">
       {/* Desktop sidebar */}
-      <aside className="fixed top-9 bottom-0 left-0 z-30 hidden w-64 flex-col border-r bg-sidebar lg:flex">
+      <aside className="fixed top-0 bottom-0 left-0 z-30 hidden w-64 flex-col border-r bg-sidebar lg:flex">
         <div className="flex h-16 items-center border-b px-5">
           <Logo />
         </div>
@@ -142,7 +150,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       {/* Main */}
       <div className="lg:pl-64">
-        <header className="sticky top-9 z-20 flex h-16 items-center gap-3 border-b bg-background/80 px-4 backdrop-blur-md md:px-6">
+        <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b bg-background/80 px-4 backdrop-blur-md md:px-6">
           <Button
             variant="ghost"
             size="icon"
@@ -161,6 +169,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </Link>
 
           <div className="ml-auto flex items-center gap-1">
+            <ButtonLink
+              variant="ghost"
+              size="icon"
+              aria-label="Powered by GetMyShade"
+              title="Powered by GetMyShade"
+              href="/integration-guide"
+              className="p-0"
+            >
+              <GetMyShadeMark className="size-6" />
+            </ButtonLink>
             <Button variant="ghost" size="icon" aria-label="Notifications">
               <Bell className="size-5" />
             </Button>

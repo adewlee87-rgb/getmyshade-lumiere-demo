@@ -17,7 +17,7 @@ const links = [
 export function MarketingNav() {
   const [open, setOpen] = React.useState(false)
   return (
-    <header className="sticky top-9 z-30 border-b border-border/60 bg-background/80 backdrop-blur-md">
+    <header className="sticky top-0 z-30 border-b border-border/60 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-8">
         <Link href="/" className="flex items-center gap-2">
           <BrandLogo />
