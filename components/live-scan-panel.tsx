@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Camera, AlertTriangle, Loader2 } from 'lucide-react'
+import { Camera, AlertTriangle, Loader2, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { ScanOutcome } from '@/components/scan-outcome'
@@ -9,76 +9,113 @@ import { ScanTips } from '@/components/scan-tips'
 import { useScanFlow } from '@/lib/use-scan-flow'
 import { cn } from '@/lib/utils'
 
-type CameraState = 'idle' | 'requesting' | 'live' | 'denied' | 'unsupported'
+type CameraState = 'idle' | 'requesting' | 'capturing' | 'denied' | 'unsupported'
+type Pose = 'forward' | 'left' | 'right'
 
-// How long the "hold still" countdown runs before we auto-capture, so the
-// user has a moment to center their face. One capture, no button presses.
 const COUNTDOWN_FROM = 3
+
+const poseInstructions: Record<Pose, string> = {
+  forward: 'Look forward',
+  left: 'Turn your head left',
+  right: 'Turn your head right',
+}
+
+const poseLabels: Record<Pose, string> = {
+  forward: 'Forward',
+  left: 'Left',
+  right: 'Right',
+}
+
+// The three angles we walk the user through, in order. The forward frame is
+// what gets sent to the shade-match API; left/right add a guided, liveness-style
+// capture so the user squares up and we confirm even lighting from each side.
+const POSES: Pose[] = ['forward', 'left', 'right']
 
 export function LiveScanPanel() {
   const flow = useScanFlow()
+  // runScan is a stable reference from useScanFlow (a useCallback with [] deps).
+  // Pull it out so captureCurrentPose doesn't depend on the whole `flow` object,
+  // which is a fresh identity on every render.
+  const { runScan } = flow
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const streamRef = useRef<MediaStream | null>(null)
-  const capturedRef = useRef(false)
+  // Frames captured so far, keyed by pose. Guards against a pose being captured
+  // twice: lastCapturedPoseRef holds the index of the last pose we captured.
+  const framesRef = useRef<Partial<Record<Pose, string>>>({})
+  const lastCapturedPoseRef = useRef(-1)
 
   const [cameraState, setCameraState] = useState<CameraState>('idle')
   const [countdown, setCountdown] = useState(COUNTDOWN_FROM)
+  const [poseIndex, setPoseIndex] = useState(0)
 
   const stopCamera = useCallback(() => {
     streamRef.current?.getTracks().forEach((t) => t.stop())
     streamRef.current = null
-    setCameraState((s) => (s === 'live' ? 'idle' : s))
+    setCameraState((s) => (s === 'capturing' ? 'idle' : s))
   }, [])
 
   useEffect(() => stopCamera, [stopCamera])
 
-  const captureAndAnalyze = useCallback(() => {
-    if (capturedRef.current) return
+  // Capture the current pose's frame. When more poses remain, advance to the
+  // next one (resetting the countdown in the same batched update so the trigger
+  // effect below never re-fires against a stale countdown of 0). On the final
+  // pose, stop the camera and send the forward frame to the API.
+  const captureCurrentPose = useCallback(() => {
+    if (lastCapturedPoseRef.current >= poseIndex) return
     const video = videoRef.current
     const canvas = canvasRef.current
     if (!video || !canvas) return
-    capturedRef.current = true
 
     canvas.width = video.videoWidth || 960
     canvas.height = video.videoHeight || 960
     const ctx = canvas.getContext('2d')
     if (!ctx) return
+    lastCapturedPoseRef.current = poseIndex
     // Un-mirror the frame — the preview is mirrored for a natural "looking in a
     // mirror" feel, but the API should get the true (un-flipped) image.
     ctx.translate(canvas.width, 0)
     ctx.scale(-1, 1)
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
-    const dataUrl = canvas.toDataURL('image/jpeg', 0.92)
+    framesRef.current[POSES[poseIndex]] = canvas.toDataURL('image/jpeg', 0.92)
 
-    stopCamera()
-    flow.runScan(dataUrl)
-  }, [flow, stopCamera])
+    if (poseIndex < POSES.length - 1) {
+      setCountdown(COUNTDOWN_FROM)
+      setPoseIndex((i) => i + 1)
+    } else {
+      stopCamera()
+      runScan(framesRef.current.forward ?? framesRef.current[POSES[poseIndex]]!)
+    }
+  }, [poseIndex, runScan, stopCamera])
 
-  // Once the camera is live, run a short countdown and then capture a single
-  // frame automatically. No taps, no multi-step sequence.
+  // Tick a short countdown for the current pose. Depends on cameraState and
+  // poseIndex only — NOT on countdown or captureCurrentPose — so ticking never
+  // tears down its own interval. Restarts fresh each time the pose advances.
   useEffect(() => {
-    if (cameraState !== 'live') return
+    if (cameraState !== 'capturing') return
     setCountdown(COUNTDOWN_FROM)
     const interval = setInterval(() => {
-      setCountdown((c) => {
-        if (c <= 1) {
-          clearInterval(interval)
-          captureAndAnalyze()
-          return 0
-        }
-        return c - 1
-      })
+      setCountdown((c) => (c <= 1 ? 0 : c - 1))
     }, 1000)
     return () => clearInterval(interval)
-  }, [cameraState, captureAndAnalyze])
+  }, [cameraState, poseIndex])
+
+  // When a pose's countdown reaches zero, capture that frame automatically.
+  useEffect(() => {
+    if (cameraState === 'capturing' && countdown === 0) {
+      captureCurrentPose()
+    }
+  }, [cameraState, countdown, captureCurrentPose])
 
   async function startCamera() {
     if (typeof navigator === 'undefined' || !navigator.mediaDevices?.getUserMedia) {
       setCameraState('unsupported')
       return
     }
-    capturedRef.current = false
+    framesRef.current = {}
+    lastCapturedPoseRef.current = -1
+    setPoseIndex(0)
+    setCountdown(COUNTDOWN_FROM)
     setCameraState('requesting')
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -90,7 +127,7 @@ export function LiveScanPanel() {
         videoRef.current.srcObject = stream
         await videoRef.current.play()
       }
-      setCameraState('live')
+      setCameraState('capturing')
     } catch {
       setCameraState('denied')
     }
@@ -98,7 +135,9 @@ export function LiveScanPanel() {
 
   function fullReset() {
     flow.reset()
-    capturedRef.current = false
+    framesRef.current = {}
+    lastCapturedPoseRef.current = -1
+    setPoseIndex(0)
     setCameraState('idle')
     setCountdown(COUNTDOWN_FROM)
   }
@@ -106,6 +145,8 @@ export function LiveScanPanel() {
   if (flow.phase !== 'idle') {
     return <ScanOutcome flow={flow} onFullReset={fullReset} />
   }
+
+  const currentPose = POSES[poseIndex]
 
   return (
     <>
@@ -120,23 +161,42 @@ export function LiveScanPanel() {
               muted
               className={cn(
                 'size-full scale-x-[-1] object-cover',
-                cameraState !== 'live' && 'hidden',
+                cameraState !== 'capturing' && 'hidden',
               )}
             />
-            {cameraState === 'live' && (
+            {cameraState === 'capturing' && (
               <>
                 <div className="pointer-events-none absolute inset-6 rounded-[45%] border-2 border-dashed border-white/70" />
+                {/* Pose progress dots — one per angle, checked as it's captured */}
+                <div className="pointer-events-none absolute inset-x-0 top-4 flex items-center justify-center gap-2">
+                  {POSES.map((pose, i) => (
+                    <span
+                      key={pose}
+                      className={cn(
+                        'flex items-center gap-1 rounded-full px-2.5 py-1 text-xs backdrop-blur-sm transition-colors',
+                        i === poseIndex
+                          ? 'bg-white/90 font-medium text-black'
+                          : i < poseIndex
+                            ? 'bg-emerald-500/80 text-white'
+                            : 'bg-black/40 text-white/80',
+                      )}
+                    >
+                      {i < poseIndex && <Check className="size-3" />}
+                      {poseLabels[pose]}
+                    </span>
+                  ))}
+                </div>
                 <div className="pointer-events-none absolute inset-x-0 bottom-4 flex flex-col items-center gap-1">
                   <span className="grid size-14 place-items-center rounded-full bg-black/45 font-serif text-2xl text-white backdrop-blur-sm">
                     {countdown}
                   </span>
                   <span className="rounded-full bg-black/45 px-3 py-1 text-xs text-white backdrop-blur-sm">
-                    Hold still — capturing automatically
+                    {poseInstructions[currentPose]} — hold still
                   </span>
                 </div>
               </>
             )}
-            {cameraState !== 'live' && (
+            {cameraState !== 'capturing' && (
               <div className="flex size-full flex-col items-center justify-center gap-3 p-6 text-center">
                 {cameraState === 'denied' ? (
                   <>
@@ -163,7 +223,8 @@ export function LiveScanPanel() {
                   <>
                     <Camera className="size-8 text-muted-foreground" />
                     <p className="text-sm text-muted-foreground">
-                      Center your face in the frame and we'll capture your scan automatically.
+                      We'll guide you through three quick angles — look forward, then turn left and
+                      right. Each is captured automatically.
                     </p>
                   </>
                 )}
@@ -171,7 +232,7 @@ export function LiveScanPanel() {
             )}
           </div>
 
-          {cameraState !== 'live' && (
+          {cameraState !== 'capturing' && (
             <Button
               className="w-full justify-center"
               size="lg"

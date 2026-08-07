@@ -448,7 +448,8 @@ export const recommendedProducts = products.filter((p) => p.matched)
 // ---------- GetMyShade API catalog sync ----------
 // Maps this storefront's categories to the product_type enum the GetMyShade
 // API expects (foundation | concealer | powder | blush | bronzer | contour |
-// lipstick | other), and serializes shades into its bulk-create payload shape.
+// highlighter | lipstick | other), and serializes shades into its bulk-create
+// payload shape.
 export type GmsProductType =
   | 'foundation'
   | 'concealer'
@@ -456,6 +457,7 @@ export type GmsProductType =
   | 'blush'
   | 'bronzer'
   | 'contour'
+  | 'highlighter'
   | 'lipstick'
   | 'other'
 
@@ -463,7 +465,7 @@ const categoryToGmsType: Record<Category, GmsProductType> = {
   Foundation: 'foundation',
   Concealer: 'concealer',
   Contour: 'contour',
-  Highlighter: 'other',
+  Highlighter: 'highlighter',
   Blush: 'blush',
   Powder: 'powder',
   Primer: 'other',
@@ -489,9 +491,12 @@ export function isGmsMatchable(category: Category) {
 }
 
 // The GetMyShade product_type values that correspond to the matchable
-// categories above. Note 'Highlighter' maps to 'other', so 'other' is allowed
-// here — the category-level filter on the sync payload is what keeps primer /
-// setting spray / tools (also 'other') out of the match catalog.
+// categories above. Each matchable category maps to a distinct complexion
+// product_type (foundation / concealer / contour / highlighter) — the same
+// values the live match engine returns — so a match of any of these survives
+// sanitizeMatchResponse in lib/use-scan-flow.ts. The category-level filter on
+// the sync payload is what keeps non-matchable 'other' products (primer /
+// setting spray / tools) out of the match catalog.
 export const gmsMatchableProductTypes = new Set<GmsProductType>(
   [...gmsMatchableCategories].map((c) => categoryToGmsType[c]),
 )
