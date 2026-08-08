@@ -40,7 +40,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
             warm indoor bulbs, which can skew every shade toward gold.
           </p>
           <p>
-            If you're using your AI Beauty Match results as a starting point, treat the recommended
+            If you're using your Beauty Match results as a starting point, treat the recommended
             shade as your center point rather than a single fixed answer: skin can shift slightly
             with the seasons, so it's worth re-scanning every few months, especially after a summer
             tan fades or in the depths of winter.

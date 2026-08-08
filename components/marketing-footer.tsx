@@ -8,7 +8,7 @@ const cols = [
       { href: '/catalog', label: 'All Products' },
       { href: '/collections', label: 'Collections' },
       { href: '/recommendations', label: 'For You' },
-      { href: '/match', label: 'AI Beauty Match' },
+      { href: '/match', label: 'Find My Shade' },
     ],
   },
   {
@@ -40,8 +40,8 @@ export function MarketingFooter() {
             <span className="font-serif text-xl tracking-tight">Lumière</span>
           </div>
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
-            AI-matched beauty, made personal. Discover complexion products chosen for your
-            unique skin.
+            Beauty in a shade for every skin. Discover complexion products crafted for your
+            unique tone.
           </p>
         </div>
         {cols.map((c) => (

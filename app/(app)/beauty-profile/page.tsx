@@ -25,7 +25,7 @@ export default function BeautyProfilePage() {
       <PageHeader
         eyebrow="Personalized"
         title="Beauty profile"
-        description="Everything your AI Beauty Match has learned about you, in one place."
+        description="Everything your beauty profile has learned about you, in one place."
       >
         <ButtonLink href="/match">
           <Wand2 className="size-4" /> Re-run analysis

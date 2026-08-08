@@ -58,8 +58,9 @@ export default function LandingPage() {
                 Beauty matched to <em className="italic text-primary">your</em> skin, precisely.
               </h1>
               <p className="max-w-md text-pretty text-lg leading-relaxed text-muted-foreground">
-                Lumière analyzes your complexion and curates foundations, shades, and
-                finishing products chosen for your unique tone, undertone, and skin type.
+                Lumière is a modern complexion house, crafting foundations, concealers, and
+                finishing products in a shade for every skin — beautiful, buildable formulas
+                made to feel like they were created just for you.
               </p>
               <div className="flex flex-wrap items-center gap-3">
                 <ButtonLink href="/signup" size="lg" className="h-11 px-5 text-base">

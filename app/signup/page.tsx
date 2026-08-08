@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
 const perks = [
-  'Free AI beauty analysis',
+  'Find your perfect shade, free',
   'Personalized shade matching',
   'Save your wishlist & looks',
 ]

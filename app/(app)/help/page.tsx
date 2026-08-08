@@ -24,7 +24,7 @@ const faqSections = [
     category: 'Shades & Matching',
     items: [
       {
-        q: 'How accurate is the AI Beauty Match?',
+        q: 'How accurate is the shade match?',
         a: 'Our photo scan reports a confidence score alongside every result. For best accuracy, use even, natural lighting and a centered, unfiltered selfie.',
       },
       {

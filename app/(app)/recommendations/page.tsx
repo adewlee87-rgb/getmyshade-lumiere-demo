@@ -25,7 +25,7 @@ export default function RecommendationsPage() {
       <PageHeader
         eyebrow="Personalized"
         title="Recommended for you"
-        description="Every product below was selected by your AI Beauty Match based on your unique profile."
+        description="Every product below was matched to your beauty profile for your unique tone and undertone."
       />
 
       <div className="grid gap-6 lg:grid-cols-[320px_1fr]">

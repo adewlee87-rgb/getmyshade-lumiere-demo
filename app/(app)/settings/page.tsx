@@ -9,7 +9,7 @@ import { GmsDeveloperPanel } from '@/components/gms-developer-panel'
 
 const notificationPrefs = [
   { label: 'Order updates', description: 'Shipping, delivery, and order confirmations.' },
-  { label: 'New shade matches', description: 'When your AI Beauty Match finds a new match.' },
+  { label: 'New shade matches', description: 'When we find a new shade match for your profile.' },
   { label: 'Restock alerts', description: 'When a wishlist item is back in stock.' },
   { label: 'Promotions', description: 'Sales, new collections, and beauty tips.' },
 ]
