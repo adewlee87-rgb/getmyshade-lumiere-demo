@@ -1,0 +1,406 @@
+GETMYSHADE × LUMIEREFULL DEVELOPER PRODUCT, UI & DATA SPECIFICATION
+Version 2.0 — Updated Shopper Recommendation & Add-to-Cart FlowDemo Brand: Lumiere | Shopper Storefront + Brand Admin Dashboard + API/Data Layer
+1. Executive Product Goal
+Build a polished, realistic beauty e-commerce demo for the fictional brand Lumiere that demonstrates GetMyShade as a B2B shade-matching infrastructure/API.
+The demo has two connected interfaces:1. Lumiere Shopper Storefront — the customer-facing shopping experience.2. Lumiere × GetMyShade Brand Admin — the brand-facing management, analytics and intelligence experience.
+The most important shopper behavior is:
+Product → Find Your Shade → Scan → Multiple Ranked Shade Recommendations → Match Score/Confidence → Add to Cart
+GetMyShade should not force shoppers to create a GetMyShade account. The shopper can receive recommendations anonymously and take a direct commerce action.
+IMPORTANT UPDATE:GetMyShade returns MULTIPLE possible recommendations, not only one shade. Each recommendation has a match score/accuracy-style level. The highest-ranked match should be visually emphasized, but every recommended shade must have its own Add to Cart action.
+2. Core Product Positioning
+GetMyShade is an infrastructure layer for beauty brands.
+The brand owns:• Shopper relationship• Website• Product catalog• Shade catalog• Checkout• Brand experience
+GetMyShade provides:• Shade analysis• Matching• Ranked recommendations• Match scores• Feedback collection• Match analytics• Integration infrastructure• Match intelligence/data layer
+The shopper should feel like they are using Lumiere's website with GetMyShade seamlessly embedded into it.
+3. High-Level Architecture
+Lumiere Shopper Website        ↓GetMyShade Widget / SDK / API Client        ↓GetMyShade API        ↓Matching Engine        ↓Lumiere Product + Shade Catalog        ↓Ranked Match Recommendations        ↓Shopper selects a recommendation        ↓ADD TO CART        ↓Lumiere Commerce System
+Separately:
+GetMyShade Event/Data Layer        ↓Lumiere Brand Dashboard        ↓Analytics / Match Performance / Feedback / Commerce / Match Intelligence
+Build the UI and backend with a clean abstraction layer so the current simulated/mathematical matching system can later be upgraded without rebuilding the interfaces.
+4. Demo Brand — Lumiere
+Brand name: Lumiere
+Positioning:Modern complexion beauty designed for every skin tone.
+Products:• Lumiere Skin Veil Foundation• Lumiere Second Skin Concealer• Lumiere Sculpt Contour• Lumiere Radiance Highlighter
+Suggested demo catalog:• Foundation: 30–40 shades• Concealer: 20–30 shades• Contour: 8–12 shades• Highlighter: 8–12 shades
+Use realistic shade IDs, names, undertone classifications and measurable color data.
+5. Shopper Homepage
+Navigation:• Home• Foundation• Concealer• Contour• Highlighter• About• Find Your Shade• Account• Bag
+Hero:“Your skin. Your shade. Your match.”
+Subtext:“Discover your Lumiere complexion match with GetMyShade.”
+Primary CTA:Find Your Shade
+Secondary CTA:Shop Foundation
+6. Global GetMyShade Entry Point
+Place a persistent “Find Your Shade” entry point in the upper-right/header area of the shopper site.
+Display:Find Your ShadePowered by GetMyShade
+The component should be reusable across:• Homepage• Category pages• Product pages• Potentially navigation/header
+The button should open GetMyShade without taking the shopper away from Lumiere.
+7. Category Pages
+Create category pages for:• Foundation• Concealer• Contour• Highlighter
+Each product card should include:• Product image• Product name• Price• Number of shades• Brief description• Shop/View Product CTA
+Where appropriate, include:Find Your Shade — Powered by GetMyShade
+8. Product Detail Page
+Example:Lumiere Skin Veil Foundation$4832 shades
+Display:• Product images• Product name• Price• Description• Benefits• Finish• Coverage• Size• Shade selector• Add to Bag
+Shade area:Choose your shade
+Show all available shade swatches.
+Below the selector:Not sure which shade is right for you?Find Your Shade — Powered by GetMyShade
+The shopper can always manually select a shade. GetMyShade is an assistance layer, not a replacement for the brand's catalog.
+9. Shade Selector
+Display all available shades with:• Shade circle/swatches• Shade number• Shade name• Optional undertone indicator
+Example:310 Medium Neutral320 Medium Warm330 Medium Olive340 Tan Neutral350 Tan Warm
+The selected shade must remain synchronized with the cart/product state.
+10. Find Your Shade Modal
+When clicked, open:
+Find Your Lumiere Shade
+“Get personalized shade recommendations in less than a minute.”
+Primary:Start Shade Match
+Secondary:I'll choose my shade manually
+Include a concise explanation that the shopper will receive multiple possible matches and can choose the one they prefer.
+11. Account Requirement
+NO GetMyShade account should be required to complete a shade match.
+Flow:Start Scan → Analyze → Recommendations → Add to Cart
+Do not require:• Email• Password• GetMyShade registration• Mandatory profile creation
+Optional after results:Want to save your match?Create a Lumiere account to save your shade for your next visit.
+Buttons:Create AccountNot Now
+12. Scan Experience
+Mobile-first scan screen:
+Find Your Shade
+“Position your face inside the frame.”
+Instructions:• Use natural lighting• Avoid heavy filters• Keep face centered• Avoid extreme shadows• Hold device steady
+Button:Start Scan
+For the demo, use a simulated scan. The implementation must be modular so a production GetMyShade analysis API can replace the simulation.
+13. Anonymous Scan Session
+At scan start generate a random Anonymous Scan ID.
+Example:GMS-20260829-8F42A7
+The Scan ID must not contain:• Name• Email• Phone number• Address
+Use it to connect:Scan → Measurements → Recommendations → Shopper selection → Feedback → Add to Cart → Purchase outcome where available.
+14. Scan Quality Gate
+Before generating recommendations, evaluate whether the scan is usable.
+Possible statuses:• PASS• RETRY• FAILED
+If insufficient quality:“We couldn't get a reliable reading.”
+Possible reasons:• Low lighting• Face not centered• Image quality too low• Camera permission denied• Scan interrupted
+Actions:Try AgainChoose Your Shade Manually
+Never fabricate a recommendation when the scan is insufficient.
+15. Analysis Experience
+Show a brief analysis state:
+Analyzing your complexion...
+Steps:1. Scan quality check2. Measurement standardization3. Undertone analysis4. Compare with Lumiere shade catalog5. Rank compatible shades6. Generate recommendation set
+Then:Your Lumiere Matches Are Ready
+16. CRITICAL UPDATED MATCH RESULTS EXPERIENCE
+GetMyShade MUST return multiple possible shade recommendations.
+Do NOT design the result as a single “correct shade.”
+Primary heading:Your GetMyShade Matches
+Supporting text:“We found several Lumiere shades that may work for you. Your strongest match is shown first.”
+Example:
+BEST MATCH340 — Tan Neutral96% Match[ADD TO CART]
+OTHER POSSIBLE MATCHES
+350 — Tan Warm92% Match[ADD TO CART]
+330 — Medium Olive88% Match[ADD TO CART]
+Every recommendation card must have its own Add to Cart action.
+The highest-ranked match should receive stronger visual emphasis, but alternative recommendations must remain easy to select.
+17. Match Score / Accuracy Language
+Use “Match” or “Match Score” as the default consumer-facing terminology.
+Preferred:96% Match
+Avoid claiming:96% Accuracy
+unless the underlying methodology has actually validated that percentage as accuracy.
+The percentage should be understood as a match/confidence-style indicator, not a guarantee.
+Admin/internal systems may store a separate numerical confidence value between 0 and 1 if appropriate.
+18. Recommendation Ranking
+The API must support ranked recommendations.
+Each recommendation should include:• rank• shade_id• shade_name• match_score• confidence• product_id• product_category• availability• optional reason/explanation
+Example:1. LM-340 — Tan Neutral — 0.962. LM-350 — Tan Warm — 0.923. LM-330 — Medium Olive — 0.88
+The frontend must not assume that there is only one result.
+19. Recommendation Card
+Each recommendation card should display:
+• Rank / label• Shade swatch• Shade number• Shade name• Match score• Optional undertone• Availability• Add to Cart
+Example:
+BEST MATCH[swatch]340Tan Neutral96% Match[Add to Cart]
+Alternative:[swatch]350Tan Warm92% Match[Add to Cart]
+If a shade is unavailable:Currently unavailableView productDo not allow Add to Cart.
+20. Direct Add-to-Cart Behavior
+The primary shopper action after recommendations is ADD TO CART.
+When shopper clicks Add to Cart on a recommendation:1. Add the exact recommended product/SKU/shade to Lumiere cart.2. Record the selected recommendation.3. Record recommendation rank.4. Record match score.5. Record the scan_id.6. Record the add_to_cart event.7. Show confirmation.8. Keep the shopper in the shopping experience unless they choose to view the bag.
+Example:Shade 350 selectedRecommendation rank: 2Match score: 92%Added to cart: TRUE
+Do NOT require the shopper to:• Return to the product page• Manually find the shade again• Create an account• Rescan
+The Add to Cart action should be one of the shortest paths in the entire experience.
+21. Post-Add-to-Cart Confirmation
+After Add to Cart:
+“Added to your bag”
+Display:Lumiere Skin Veil Foundation350 — Tan Warm92% Match
+Actions:Continue ShoppingView Bag
+Optional:Save My Match
+The selected shade must be clearly visible in the confirmation.
+22. View Other Matches
+The shopper should be able to expand or scroll through all returned recommendations.
+Support:• Top 3• Top 5• Configurable number of recommendations
+Do not overload the shopper with an unnecessarily large list. The API should support a configurable recommendation_count.
+23. Why This Match?
+Optional expandable consumer explanation:
+Why we matched you with 340
+Example:“Your complexion measurements and undertone are most closely aligned with this Lumiere shade.”
+Do not expose:• Proprietary formulas• Internal weighting• Secret thresholds• Gemini prompts• Model instructions• Internal algorithm implementation
+24. Shopper Feedback
+After a shopper sees a recommendation or after adding to cart, allow lightweight feedback.
+Question:How does this match feel?
+Options:• Looks right• Too light• Too dark• Too warm• Too cool• Not sure
+Link feedback to:scan_idrecommended shaderecommendation rankmatch score
+If the shopper selected an alternative recommendation, record that separately.
+25. Critical Outcome Tracking
+For every scan, capture the difference between:
+1. GetMyShade's #1 recommendation2. Other recommendations3. Shopper's actual selection4. Add-to-cart outcome5. Purchase outcome, where integrated6. Feedback
+Example:
+#1 recommendation:340 — 96%
+Shopper selected:350 — 92%
+Added to cart:TRUE
+Purchased:TRUE
+Feedback:LOOKS_RIGHT
+This is more valuable than simply recording which shade was recommended.
+26. Cross-Product Recommendations
+Support matching across:• Foundation• Concealer• Contour• Highlighter
+Example:Foundation:340 — 96% Match
+Concealer:330 — 93% Match
+Contour:Deep 3 — 91% Match
+Each product recommendation should support its own Add to Cart action when the product is available.
+27. Shopper Commerce Flow
+Preferred shortest path:
+Product Page↓Find Your Shade↓Scan↓Multiple Ranked Recommendations↓Shopper chooses a recommendation↓ADD TO CART↓Continue Shopping / View Bag
+The demo must make this flow obvious during a brand presentation.
+28. Admin Dashboard Purpose
+Create a separate authenticated brand interface:
+Lumiere × GetMyShade
+Conceptual route:/admin
+The dashboard demonstrates the value GetMyShade provides to a beauty brand beyond the shopper widget.
+29. Admin Navigation
+Sidebar:• Overview• Match Analytics• Scans• Products• Shades• Shopper Feedback• Conversion• Match Intelligence• API & Integration• Data & Privacy• Team• Settings
+30. Admin Overview
+Header:Good morning, Lumiere
+Subheader:Here's how GetMyShade is performing across your complexion catalog.
+KPI cards:• Total Scans• Completed Scans• Matches Generated• Match Acceptance• Alternative Shade Selection• Match-to-Cart• Match-to-Purchase• Feedback Received
+Use realistic synthetic demo data and clearly distinguish demo data from production data.
+31. Admin Date Filters
+Support:• Today• 7 Days• 30 Days• 90 Days• Custom• Compare to previous period
+32. Scan Analytics
+Show:• Total scans• Completed scans• Failed scans• Abandoned scans• Scan completion rate• Re-scan rate• Average scan quality
+Break down by:• Date• Product• Category• Device• Other appropriately aggregated dimensions
+33. Match Analytics
+Section:Match Performance
+Metrics:• Average Match Score• Average Confidence• #1 Recommendation Acceptance• Alternative Recommendation Selection• Recommendation-to-Cart• Match-to-Purchase• Feedback Rate
+IMPORTANT:Track not only whether a match was generated, but which ranked recommendation the shopper actually chose.
+34. Recommendation Rank Analytics
+Create a dedicated view:
+Recommendation Selection
+Example:#1 Recommendation selected: 82%#2 Recommendation selected: 13%#3 Recommendation selected: 5%
+Also show:• Add-to-cart rate by rank• Purchase rate by rank• Feedback by rank
+This can reveal whether the #1 recommendation consistently performs better than alternatives.
+35. Shade Performance Dashboard
+Table columns:• Shade• Times Recommended• #1 Recommendations• Alternative Recommendations• Selected• Add to Cart• Purchased• Match Score• Acceptance Rate• Feedback Status
+Example:340 | 2,841 recommended | 2,520 #1 | 2,681 selected | 94.4%350 | 2,231 recommended | 1,400 #1 | 2,048 selected | 91.8%330 | 2,104 recommended | 1,100 #1 | 1,821 selected | 86.5%
+Allow sorting and filtering.
+36. Shade Detail Page
+Example:Shade 340 — Tan Neutral
+Display:• Shade ID• Product• Category• Undertone• Color measurements• Times recommended• #1 recommendation count• Alternative recommendation count• Shopper selection count• Add-to-cart count• Purchase count• Average match score• Feedback breakdown
+Feedback:Looks RightToo LightToo DarkToo WarmToo CoolNot Sure
+37. Shopper Feedback Dashboard
+Filters:• Product• Shade• Date• Recommendation rank• Feedback type• Match-score range
+Categories:• Looks right• Too light• Too dark• Too warm• Too cool• Not sure
+Add trend charts and shade-level comparisons.
+38. Product Analytics
+For every product show:• Product page views• Find Your Shade clicks• Scans started• Scans completed• Recommendations generated• Shade selections• Add-to-cart• Purchase• Feedback• Average match score
+Support Foundation, Concealer, Contour and Highlighter.
+39. Commerce Conversion Funnel
+Section:GetMyShade Commerce Impact
+Funnel:Product Page Views↓Find Your Shade Clicks↓Scans Started↓Scans Completed↓Match Generated↓Recommendation Viewed↓Shade Selected↓Add to Cart↓Checkout↓Purchase
+The dashboard must be able to distinguish:• #1 recommendation selected• Alternative recommendation selected
+This is critical for measuring GetMyShade's real-world value.
+40. Match Intelligence
+Create a strategic section called:
+Match Intelligence
+Show:• Anonymous Match Events• Validated Match Events• Shopper Feedback Events• Alternative Selection Events• Add-to-Cart Events• Purchase Outcomes• Model Improvement Signals
+The purpose is to demonstrate the future intelligence/data moat of GetMyShade.
+41. Match Intelligence Data Flow
+Anonymous Scan↓Standardized Measurements↓Available Lumiere Shade Set↓Ranked GetMyShade Recommendations↓Shopper Selection↓Add to Cart↓Purchase/Return/Correction where available↓Feedback↓Validated Outcome↓Model Evaluation / Improvement Signal
+42. Model Improvement Signals
+Example:
+“Shade 330 is receiving a higher-than-average ‘too warm’ feedback rate.”
+Show:• Current average match score• #1 recommendation rate• Alternative selection rate• Add-to-cart rate• Purchase rate• Negative feedback• Suggested review status
+Use:Flagged for model review
+Do not claim automatic retraining unless it is actually implemented.
+43. Future ML Dataset
+Every meaningful event should be structured so future ML/model evaluation can compare prediction with real-world behavior.
+Potential fields:• anonymous_scan_id• standardized_measurements• scan_quality• lighting_quality• undertone• product_category• product_id• available_shade_set• recommendation_rank• shade_id• match_score• confidence• shopper_selected• add_to_cart• purchase• feedback• correction/return outcome where lawfully available• matching_engine_version• catalog_version• timestamp
+The important relationship is:
+What did GetMyShade recommend?vs.What did the shopper actually choose?vs.Did they add it to cart?vs.Did the purchase/feedback outcome support the recommendation?
+44. Data Capture Model
+Suggested scan/session structure:
+scan_idbrand_idsession_idproduct_categoryproduct_idtimestampdevice_typescan_qualitylighting_qualitystandardized_measurementsundertone_resultrecommendation_setselected_recommendationfeedbackadd_to_cartpurchase_eventconsent_status
+Recommendation_set should contain multiple recommendation records.
+45. Recommendation Data Model
+Each recommendation record should contain:
+recommendation_idscan_idbrand_idproduct_idshade_idshade_namerankmatch_scoreconfidenceavailabilitycreated_atmatching_engine_version
+Example:rank 1 | LM-340 | 96%rank 2 | LM-350 | 92%rank 3 | LM-330 | 88%
+46. Commerce Event Data Model
+For Add to Cart:
+event_idevent_nametimestampscan_idsession_idbrand_idproduct_idshade_idrecommendation_idrecommendation_rankmatch_scorequantity
+For purchase, capture the equivalent event identifier and relevant commerce outcome where the brand integration permits.
+47. Event Tracking
+Track:• homepage_view• category_view• product_view• find_shade_clicked• scan_started• scan_completed• scan_failed• match_generated• recommendation_viewed• recommendation_selected• add_to_cart• checkout_started• purchase_completed• feedback_submitted• scan_again• account_created• save_match_clicked
+Important:recommendation_selected must identify which ranked recommendation the shopper selected.
+48. API Response Contract
+The frontend must consume a standardized multi-recommendation response.
+Conceptual structure:
+{  "scan_id": "GMS-20260829-8F42A7",  "status": "completed",  "product": {    "id": "LM-FOUNDATION-001",    "name": "Skin Veil Foundation"  },  "recommendations": [    {      "rank": 1,      "shade_id": "LM-340",      "shade_name": "340 Tan Neutral",      "match_score": 0.96,      "confidence": 0.96,      "available": true    },    {      "rank": 2,      "shade_id": "LM-350",      "shade_name": "350 Tan Warm",      "match_score": 0.92,      "confidence": 0.92,      "available": true    },    {      "rank": 3,      "shade_id": "LM-330",      "shade_name": "330 Medium Olive",      "match_score": 0.88,      "confidence": 0.88,      "available": true    }  ]}
+The exact schema can evolve, but the frontend must be designed for an array of recommendations.
+49. Product & Shade Catalog
+Admin Products:• Product• Category• SKU• Number of shades• Active• GetMyShade enabled• Last updated
+Admin Shades:• Shade ID• Shade number• Name• Product• Undertone• Color measurements• Inventory status• Active
+The matching system must receive the current eligible shade set for the selected product.
+50. Shade Data Model
+Support:• shade_id• product_id• sku• shade_name• shade_number• category• undertone• depth• standardized_color_measurements• hex_reference• lab_reference• active• inventory_status• created_at• updated_at
+Do not rely on HEX color alone for matching.
+51. API & Integration Dashboard
+Display:Integration StatusEnvironmentAPI VersionAPI Key statusAllowed domainsWebhook status
+Actions:• Create API Key• Rotate API Key• Revoke API Key• Add Domain• Test Connection
+Never display a complete secret API key after creation.
+52. API Usage
+Show:• Requests today• Requests this month• Monthly limit• Usage percentage• Successful requests• Errors• Match requests• Catalog requests
+Charts:• Requests/day• Match requests• Error rate
+53. Domain Allowlist
+Allow brands to configure approved domains.
+Example:www.lumierebeauty.comshop.lumierebeauty.com
+The backend should eventually enforce the allowlist so API credentials cannot be freely used on unapproved domains.
+54. Webhooks / Events
+Support event concepts:• scan.started• scan.completed• match.generated• recommendation.viewed• recommendation.selected• shade.selected• feedback.submitted• product.added_to_cart• checkout.started• purchase.completed
+These can later feed the brand's analytics/commerce stack.
+55. Data & Privacy
+Admin section:Data & Privacy
+Display/configure:• Raw Image Storage• Anonymous Match Data• Model Improvement Data• Consent Configuration• Retention Policy• Data Deletion Requests• Data Export
+The production implementation must be reviewed for applicable privacy/biometric/data-protection requirements. Do not make legal claims in the UI without counsel review.
+The demo should separate:1. Raw image/video data2. Derived measurements3. Recommendation/outcome records
+Do not store raw facial imagery by default for the demo.
+56. Consent & Model Improvement
+If GetMyShade plans to use data for future model improvement, build a clear consent/configuration mechanism appropriate to the applicable legal framework.
+The shopper should not need an account to use the matching service.
+Account-free matching and appropriately governed improvement-data consent are separate concepts.
+Do not secretly treat identifiable or sensitive data as training data.
+57. Shopper Account / Saved Match
+Optional post-match feature:
+Save My Match
+If shopper creates a Lumiere account, the brand may associate the match with the customer's account according to its configuration.
+The core GetMyShade matching experience must remain account-free.
+58. Admin Customer Data Philosophy
+Do not build an unnecessary individual-level surveillance interface.
+Prioritize:• Aggregated analytics• Anonymous scan data• Ranked recommendation outcomes• Shade performance• Feedback• Conversion• API usage• Product analytics
+If identifiable data is integrated later, separate permissions and governance should apply.
+59. Notifications
+Examples:Match Alert:“Shade 330 has a 12% increase in ‘too warm’ feedback over the last 30 days.”
+Recommendation Alert:“Alternative shade 350 is being selected more frequently than expected when 340 is ranked #1.”
+Product Alert:“Foundation shade 340 is currently unavailable.”
+API Alert:“API usage has reached 80% of the monthly limit.”
+60. Settings
+Brand Profile:• Name• Logo• Website• Contact• Brand colors
+GetMyShade Appearance:• Button text• Position• Accent color• Logo display• Modal style
+Matching:• Categories enabled• Products enabled• Recommendation count• Match-result display settings
+Privacy:• Consent configuration• Retention• Image storage• Analytics
+Team:• Owner• Admin• Analyst• Developer
+61. Roles & Permissions
+Owner:Full access.
+Admin:Catalog + analytics + settings.
+Analyst:Analytics only.
+Developer:API + integration + technical settings.
+API secrets must never be accessible to Analyst role.
+62. Demo Mode
+Provide:• Simulated GetMyShade• Live GetMyShade API
+The shopper UI must be identical in both modes.
+Demo Mode should use deterministic test scenarios so investor/brand demonstrations produce predictable outcomes.
+63. Simulated Multi-Match Engine
+Create deterministic scenarios.
+Scenario A:1. 340 Tan Neutral — 96%2. 350 Tan Warm — 92%3. 330 Medium Olive — 88%
+Scenario B:1. 320 Medium Warm — 94%2. 310 Medium Neutral — 91%3. 330 Medium Olive — 87%
+Scenario C:1. 440 Deep Golden — 96%2. 450 Deep Neutral — 93%3. 430 Deep Red — 89%
+Allow the tester to choose or trigger scenarios for demonstrations.
+64. API Abstraction Rule
+DO NOT hard-code the Lumiere frontend to a particular matching algorithm.
+Use:
+Lumiere Frontend↓GetMyShade SDK / API Client↓GetMyShade API↓Matching Engine
+The frontend should only depend on the response contract.
+This allows the current mathematical baseline / existing AI-assisted workflow to evolve into a stronger ML engine later without rebuilding the shopper UI.
+65. Matching Engine Versioning
+Every match should record:• matching_engine_version• catalog_version• shade_database_version• measurement_schema_version
+Example:GMS-BASELINE-1.0LUMIERE-2026-08SHADE-1.2
+This is necessary to evaluate historical recommendations accurately when the algorithm changes.
+66. Multi-Tenant Architecture
+Build as multi-tenant from the beginning.
+GetMyShade├── Brand A│   ├── Products│   ├── Shades│   ├── Scans│   └── Analytics├── Brand B│   ├── Products│   ├── Shades│   ├── Scans│   └── Analytics└── Lumiere    ├── Products    ├── Shades    ├── Scans    └── Analytics
+Lumiere is a demo tenant, not the permanent owner of the architecture.
+Each brand must have isolated catalog, settings, API credentials, analytics and permissions.
+67. Design Language
+Lumiere:• Premium• Minimal• Editorial• Modern• Luxury beauty
+GetMyShade:• Clean• Technological• Trustworthy• Subtle
+GetMyShade should not overpower Lumiere.
+The interface should communicate:“Lumiere is the shopping brand. GetMyShade powers the shade-matching infrastructure.”
+68. Mobile-First Requirements
+Shopper:• iPhone• Android• Mobile Safari• Chrome mobile
+The scan and recommendation cards must be easy to use with one hand.
+The Add to Cart button must remain prominent and accessible.
+Admin:• Desktop• Laptop• Tablet
+Responsive mobile admin is desirable but not the primary priority.
+69. Demo Data
+Use synthetic data only.
+Do not use real customer information.
+Anonymous examples:GMS-8F42A7GMS-9B21C4GMS-72A91FGMS-44D882
+All dashboard numbers should be labeled or internally identified as demo/sample data until connected to production events.
+70. Development Phases
+PHASE 1 — SHOPPER EXPERIENCE1. Homepage2. Category pages3. Product pages4. Shade selector5. Find Your Shade6. Scan simulation7. Analysis state8. Multiple ranked recommendations9. Match scores10. Add-to-Cart from every recommendation11. Feedback12. Cart confirmation
+PHASE 2 — BRAND ADMIN1. Authentication2. Overview3. Scan analytics4. Match analytics5. Recommendation-rank analytics6. Product catalog7. Shade catalog8. Feedback9. Conversion funnel10. Match Intelligence
+PHASE 3 — INFRASTRUCTURE1. Anonymous Scan ID2. Event tracking3. API abstraction4. Multi-recommendation response contract5. API keys6. Domain allowlisting7. Webhooks8. Data/consent configuration9. Versioning
+PHASE 4 — INTELLIGENCE1. Match Intelligence2. Outcome aggregation3. Shade performance4. Recommendation-rank analysis5. Model review signals6. Future ML dataset architecture
+71. End-to-End Demo Script
+A brand presentation should be able to demonstrate:
+STEP 1Open Lumiere.
+STEP 2Open Skin Veil Foundation.
+STEP 3Show all Lumiere foundation shades.
+STEP 4Click:Find Your Shade — Powered by GetMyShade.
+STEP 5Complete the simulated scan.
+STEP 6Show:Your GetMyShade Matches
+1. 340 Tan Neutral — 96% Match — Add to Cart2. 350 Tan Warm — 92% Match — Add to Cart3. 330 Medium Olive — 88% Match — Add to Cart
+STEP 7Click Add to Cart on the #2 recommendation.
+STEP 8Show:“Added to your bag — 350 Tan Warm — 92% Match.”
+STEP 9Open the Lumiere admin dashboard.
+STEP 10Show that the brand can see:• Scan• Recommendation rank• Match score• Shopper-selected shade• Add-to-cart• Feedback• Conversion
+STEP 11Open Match Intelligence and demonstrate how these events become future model-improvement signals.
+72. Success Criteria
+The demo is successful when:
+SHOPPER:• Can shop normally• Can see all brand shades• Can launch GetMyShade• Does not need a GetMyShade account• Receives multiple possible recommendations• Sees a match score for each• Can Add to Cart directly from any recommendation• Can give feedback• Can optionally save the match
+BRAND:• Can manage products• Can manage shades• Can see scans• Can see ranked recommendations• Can see match scores• Can see which recommendation shoppers choose• Can see Add-to-Cart outcomes• Can see purchase outcomes where integrated• Can see feedback• Can see shade performance• Can see conversion• Can manage API integration• Can see Match Intelligence
+GETMYSHADE:• Remains an infrastructure layer• Uses an API abstraction• Captures structured, appropriately governed outcome data• Supports multiple recommendations• Preserves version history• Is architected for future ML improvement• Is multi-tenant and brand-agnostic
+73. Final Product Structure
+LUMIERE│├── SHOPPER WEBSITE│   ├── Home│   ├── Foundation│   ├── Concealer│   ├── Contour│   ├── Highlighter│   ├── Product Detail│   ├── Shade Selector│   ├── Find Your Shade│   ├── GetMyShade Scan│   ├── Multiple Match Results│   ├── Match Scores│   ├── Add to Cart│   ├── Feedback│   ├── Bag│   └── Checkout│└── BRAND ADMIN    ├── Overview    ├── Match Analytics    ├── Scans    ├── Recommendation Rank Analytics    ├── Products    ├── Shades    ├── Feedback    ├── Conversion    ├── Match Intelligence    ├── API & Integration    ├── Data & Privacy    ├── Team    └── Settings
+74. Final Product Message
+The demo must communicate this clearly:
+“GetMyShade turns a beauty brand's existing product catalog into a personalized shade-discovery and commerce experience.”
+For the shopper:Get multiple possible matches with clear match scores and immediately add the preferred shade to cart.
+For the brand:Get visibility into how shoppers search for, select, accept, reject and purchase shades.
+For GetMyShade:Create an infrastructure layer where every appropriately governed match event can become a structured signal for evaluating and improving the matching system over time.
+The ultimate architecture is:
+ONE GETMYSHADE INFRASTRUCTURE→ MANY BEAUTY BRANDS→ EACH BRAND'S PRODUCT/SHADE CATALOG→ EACH BRAND'S SHOPPER EXPERIENCE→ RANKED PERSONALIZED RECOMMENDATIONS→ COMMERCE OUTCOMES→ MATCH INTELLIGENCE→ FUTURE MODEL IMPROVEMENT
+75. Developer Acceptance Checklist
+☐ Shopper can browse Lumiere normally without GetMyShade being intrusive.
+☐ Find Your Shade is visible on relevant pages and opens without leaving Lumiere.
+☐ Shopper can complete a match without creating an account.
+☐ GetMyShade returns multiple ranked recommendations.
+☐ Every recommendation displays a match score.
+☐ The highest-ranked recommendation is visually emphasized.
+☐ Every available recommendation has its own Add to Cart button.
+☐ Add to Cart records the exact selected shade and recommendation rank.
+☐ The system records the scan_id through the commerce journey.
+☐ Shopper feedback is tied to the recommendation and scan.
+☐ Admin can compare #1 recommendation vs alternative selections.
+☐ Admin can see recommendation, Add-to-Cart and purchase outcomes.
+☐ Admin can manage products and shades.
+☐ Admin can view Match Intelligence.
+☐ API abstraction separates UI from the matching engine.
+☐ Multi-tenant architecture is used.
+☐ Demo mode is deterministic and replaceable by a live API.
+☐ No proprietary matching formulas or prompts are exposed.
+☐ Versioning is stored for matching engine and shade/catalog data.
+☐ Synthetic data is used for the demo.

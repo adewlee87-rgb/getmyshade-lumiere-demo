@@ -94,6 +94,16 @@ export function ProductDetail({ product, related }: { product: Product; related:
                   )
                 })}
               </div>
+
+              <div className="rounded-lg border border-primary/20 bg-primary/[0.03] p-3.5 flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-xs font-semibold text-primary">Not sure which shade is right for you?</p>
+                  <p className="text-xs text-muted-foreground">Scan your skin to receive precision matches</p>
+                </div>
+                <ButtonLink href="/match" variant="default" size="sm" className="gap-1.5 shrink-0">
+                  <Sparkles className="size-3.5" /> Find Your Shade
+                </ButtonLink>
+              </div>
             </div>
           )}
 

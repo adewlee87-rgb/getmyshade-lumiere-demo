@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Sparkles, Check, ArrowRight, RotateCcw, Video, Upload, ListChecks } from 'lucide-react'
+import { Sparkles, Check, ArrowRight, RotateCcw, Video, Upload, ListChecks, Camera, Wand2, ShoppingBag } from 'lucide-react'
 import { Button, ButtonLink } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -17,28 +17,88 @@ type Phase = 'quiz' | 'analyzing' | 'results'
 
 export function BeautyMatchWorkspace() {
   return (
-    <Tabs defaultValue="live">
-      <TabsList>
-        <TabsTrigger value="live">
-          <Video className="size-4" /> Live Camera Scan
-        </TabsTrigger>
-        <TabsTrigger value="upload">
-          <Upload className="size-4" /> Upload Photo
-        </TabsTrigger>
-        <TabsTrigger value="quiz">
-          <ListChecks className="size-4" /> Guided Quiz
-        </TabsTrigger>
-      </TabsList>
-      <TabsContent value="live">
-        <LiveScanPanel />
-      </TabsContent>
-      <TabsContent value="upload">
-        <BeautyScanPanel />
-      </TabsContent>
-      <TabsContent value="quiz">
-        <QuizWorkspace />
-      </TabsContent>
-    </Tabs>
+    <div className="space-y-12">
+      <Tabs defaultValue="live">
+        <TabsList>
+          <TabsTrigger value="live">
+            <Video className="size-4" /> Live Camera Scan
+          </TabsTrigger>
+          <TabsTrigger value="upload">
+            <Upload className="size-4" /> Upload Photo
+          </TabsTrigger>
+          <TabsTrigger value="quiz">
+            <ListChecks className="size-4" /> Guided Quiz
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="live">
+          <LiveScanPanel />
+        </TabsContent>
+        <TabsContent value="upload">
+          <BeautyScanPanel />
+        </TabsContent>
+        <TabsContent value="quiz">
+          <QuizWorkspace />
+        </TabsContent>
+      </Tabs>
+
+      {/* Precision Matching in 4 Steps Section */}
+      <section className="rounded-3xl border bg-secondary/30 p-6 md:p-10 space-y-8">
+        <div className="mx-auto max-w-2xl text-center space-y-2">
+          <p className="text-xs uppercase font-semibold tracking-widest text-primary">
+            The Lumière × GetMyShade Experience
+          </p>
+          <h2 className="font-serif text-3xl font-bold tracking-tight md:text-4xl">
+            Precision Matching in 4 Steps
+          </h2>
+          <p className="text-xs text-muted-foreground">
+            Get personalized shade recommendations across all 4 collections without needing an account.
+          </p>
+        </div>
+
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            {
+              step: '01',
+              icon: Camera,
+              title: '1-Step Camera Scan',
+              desc: 'Position your face in natural light. Automated 3-2-1 countdown captures your skin tone instantly.',
+            },
+            {
+              step: '02',
+              icon: Wand2,
+              title: 'Tone & Depth Analysis',
+              desc: 'GetMyShade engine measures tone hex, undertone (warm/cool/neutral), and skin depth.',
+            },
+            {
+              step: '03',
+              icon: Sparkles,
+              title: 'Ranked Multi-Matches',
+              desc: 'Receive multiple ranked shade options with match confidence percentages (e.g. 96%, 92%).',
+            },
+            {
+              step: '04',
+              icon: ShoppingBag,
+              title: 'Direct Add-to-Cart',
+              desc: 'Add your preferred shade directly to your Lumière shopping bag from any recommendation card.',
+            },
+          ].map((s) => {
+            const Icon = s.icon
+            return (
+              <Card key={s.step} className="p-6 space-y-3 relative overflow-hidden bg-card shadow-xs">
+                <div className="flex items-center justify-between">
+                  <span className="grid size-11 place-items-center rounded-xl bg-primary/10 text-primary">
+                    <Icon className="size-5" />
+                  </span>
+                  <span className="font-serif text-3xl font-bold text-muted-foreground/30">{s.step}</span>
+                </div>
+                <h3 className="font-serif text-base font-semibold">{s.title}</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">{s.desc}</p>
+              </Card>
+            )
+          })}
+        </div>
+      </section>
+    </div>
   )
 }
 
@@ -109,7 +169,7 @@ function QuizWorkspace() {
   }
 
   if (phase === 'results') {
-    const recommended = products.filter((p) => p.matched).slice(0, 3)
+    const recommended = products.slice(0, 3)
     return (
       <div className="space-y-8">
         <Card className="overflow-hidden">
@@ -136,7 +196,7 @@ function QuizWorkspace() {
         <div>
           <div className="mb-4 flex items-center justify-between">
             <h3 className="font-serif text-xl">Top matches for you</h3>
-            <ButtonLink variant="ghost" size="sm" href="/recommendations">
+            <ButtonLink variant="ghost" size="sm" href="/collections">
               View all
               <ArrowRight className="size-4" />
             </ButtonLink>

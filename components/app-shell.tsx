@@ -4,22 +4,17 @@ import * as React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
-  LayoutDashboard,
   Sparkles,
   Wand2,
-  ShoppingBag,
   Layers,
-  Heart,
   Package,
-  User,
   GraduationCap,
-  Settings,
   LifeBuoy,
   Search,
   ShoppingCart,
   Menu,
   X,
-  Bell,
+  User,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button, ButtonLink } from '@/components/ui/button'
@@ -29,29 +24,31 @@ import { useStore } from '@/components/store-provider'
 import { BrandLogo, GetMyShadeMark } from '@/components/brand-logo'
 
 const nav = [
-  { section: 'Discover', items: [
-    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/match', label: 'Beauty Match', icon: Wand2 },
-    { href: '/recommendations', label: 'For You', icon: Sparkles },
-  ]},
-  { section: 'Shop', items: [
-    { href: '/catalog', label: 'Catalog', icon: ShoppingBag },
-    { href: '/collections', label: 'Collections', icon: Layers },
-    { href: '/wishlist', label: 'Wishlist', icon: Heart },
-    { href: '/orders', label: 'Orders', icon: Package },
-  ]},
-  { section: 'Account', items: [
-    { href: '/beauty-profile', label: 'Beauty Profile', icon: Sparkles },
-    { href: '/profile', label: 'Profile', icon: User },
-    { href: '/education', label: 'Beauty School', icon: GraduationCap },
-    { href: '/settings', label: 'Settings', icon: Settings },
-    { href: '/help', label: 'Help Center', icon: LifeBuoy },
-  ]},
+  {
+    section: 'Discover',
+    items: [
+      { href: '/match', label: 'Find Your Shade', icon: Wand2 },
+    ],
+  },
+  {
+    section: 'Shop',
+    items: [
+      { href: '/collections', label: 'Collections', icon: Layers },
+      { href: '/orders', label: 'Orders', icon: Package },
+    ],
+  },
+  {
+    section: 'Support',
+    items: [
+      { href: '/education', label: 'Beauty School', icon: GraduationCap },
+      { href: '/help', label: 'Help Center', icon: LifeBuoy },
+    ],
+  },
 ]
 
 function Logo() {
   return (
-    <Link href="/dashboard" className="flex items-center gap-2">
+    <Link href="/" className="flex items-center gap-2">
       <BrandLogo />
       <span className="font-serif text-xl tracking-tight">Lumière</span>
     </Link>
@@ -90,12 +87,12 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
         </div>
       ))}
       <Link
-        href="/integration-guide"
+        href="/"
         onClick={onNavigate}
         className="mt-auto flex items-center gap-2 rounded-lg px-3 py-2 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
       >
         <GetMyShadeMark className="size-4" />
-        Powered by GetMyShade
+        GetMyShade
       </Link>
     </nav>
   )
@@ -114,18 +111,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
         <SidebarNav />
         <div className="border-t p-3">
-          <Link
-            href="/profile"
-            className="flex items-center gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-muted"
-          >
+          <div className="flex items-center gap-3 rounded-lg px-2 py-2">
             <Avatar>
-              <AvatarFallback>SR</AvatarFallback>
+              <AvatarFallback>LM</AvatarFallback>
             </Avatar>
             <div className="min-w-0">
-              <p className="truncate text-sm font-medium">Sofia Rivera</p>
-              <p className="truncate text-xs text-muted-foreground">Warm · Combination</p>
+              <p className="truncate text-sm font-medium">Lumière Shopper</p>
+              <p className="truncate text-xs text-muted-foreground">Guest Member</p>
             </div>
-          </Link>
+          </div>
         </div>
       </aside>
 
@@ -161,35 +155,27 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </Button>
 
           <Link
-            href="/search"
+            href="/match"
             className="flex h-9 flex-1 items-center gap-2 rounded-full border bg-muted/50 px-4 text-sm text-muted-foreground transition-colors hover:bg-muted md:max-w-md"
           >
             <Search className="size-4" />
             Search products, shades, concerns…
           </Link>
 
-          <div className="ml-auto flex items-center gap-1">
+          <div className="ml-auto flex items-center gap-2">
             <ButtonLink
-              variant="ghost"
-              size="icon"
-              aria-label="Powered by GetMyShade"
-              title="Powered by GetMyShade"
-              href="/integration-guide"
-              className="p-0"
+              href="/match"
+              variant="default"
+              size="sm"
+              className="gap-1.5 font-medium shadow-sm bg-primary text-primary-foreground"
             >
-              <GetMyShadeMark className="size-6" />
+              <Wand2 className="size-3.5" />
+              <span>Find Your Shade</span>
+              <Badge variant="secondary" className="ml-1 text-[10px] px-1.5 py-0 bg-primary-foreground/20 text-primary-foreground border-none">
+                GetMyShade
+              </Badge>
             </ButtonLink>
-            <Button variant="ghost" size="icon" aria-label="Notifications">
-              <Bell className="size-5" />
-            </Button>
-            <ButtonLink
-              variant="ghost"
-              size="icon"
-              aria-label="Wishlist"
-              href="/wishlist"
-            >
-              <Heart className="size-5" />
-            </ButtonLink>
+
             <ButtonLink
               variant="ghost"
               size="icon"

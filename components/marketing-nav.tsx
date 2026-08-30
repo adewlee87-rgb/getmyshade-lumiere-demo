@@ -7,11 +7,9 @@ import { Button, ButtonLink } from '@/components/ui/button'
 import { BrandLogo } from '@/components/brand-logo'
 
 const links = [
-  { href: '/#how', label: 'How it works' },
-  { href: '/catalog', label: 'Shop' },
   { href: '/collections', label: 'Collections' },
-  { href: '/education', label: 'Beauty School' },
-  { href: '/integration-guide', label: 'Developers' },
+  { href: '/match', label: 'Find Your Shade' },
+  { href: '/admin', label: 'Brand Admin Portal' },
 ]
 
 export function MarketingNav() {
@@ -29,7 +27,7 @@ export function MarketingNav() {
             <Link
               key={l.label}
               href={l.href}
-              className="text-sm text-foreground/70 transition-colors hover:text-foreground"
+              className="text-sm text-foreground/70 transition-colors hover:text-foreground font-medium"
             >
               {l.label}
             </Link>
@@ -37,11 +35,11 @@ export function MarketingNav() {
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
-          <ButtonLink href="/login" variant="ghost" size="lg">
-            Sign in
+          <ButtonLink href="/admin" variant="outline" size="sm">
+            Brand Admin
           </ButtonLink>
-          <ButtonLink href="/signup" size="lg">
-            Get your match
+          <ButtonLink href="/match" size="sm" className="gap-1.5 font-medium shadow-sm">
+            <span>Find Your Shade</span>
           </ButtonLink>
         </div>
 
