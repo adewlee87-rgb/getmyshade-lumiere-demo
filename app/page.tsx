@@ -11,6 +11,8 @@ import {
   Wand2,
   Eye,
   ShoppingBag,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react'
 import { MarketingNav } from '@/components/marketing-nav'
 import { MarketingFooter } from '@/components/marketing-footer'
@@ -85,59 +87,162 @@ export default function LandingPage() {
       <MarketingNav />
 
       <main className="flex-1">
-        {/*-Inspired Luxury Hero */}
-        <section className="relative overflow-hidden border-b bg-gradient-to-b from-card via-background to-secondary/30">
-          <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 py-16 md:grid-cols-2 md:px-8 md:py-24">
-            <div className="flex flex-col items-start gap-6">
-              <Badge variant="accent" className="gap-1.5 px-3.5 py-1 text-xs uppercase tracking-wider">
-                <Sparkles className="size-3.5" /> Lumiere Precision Shade Matching
-              </Badge>
-              <h1 className="text-balance font-serif text-5xl leading-[1.04] tracking-tight md:text-6xl lg:text-7xl">
-                Beauty for all. <br />
-                Shades for <em className="italic text-primary">every</em> skin.
-              </h1>
-              <p className="max-w-xl text-pretty text-lg leading-relaxed text-muted-foreground">
-                Lumière crafts luxury complexion formulas across foundations, concealers, contour, and highlighters. Lumière Precision Shade matching aligns your skin tone seamlessly in seconds.
-              </p>
+        {/* Fenty-Inspired Luxury Hero Banner */}
+        <section className="relative w-full bg-[#a6686d] text-neutral-950 overflow-hidden">
+          <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:px-8 md:py-16 lg:py-20">
+            <div className="grid items-center gap-8 lg:grid-cols-12 lg:gap-12">
               
-              <div className="flex flex-wrap items-center gap-4 pt-2">
-                <ButtonLink href="/match" size="lg" className="h-12 px-7 text-base shadow-lg shadow-primary/20">
-                  <Sparkles className="size-4" /> Find Your Shade
-                </ButtonLink>
-                <ButtonLink href="/collections" variant="outline" size="lg" className="h-12 px-6 text-base">
-                  Explore Collections
-                </ButtonLink>
-              </div>
-
-              <div className="flex items-center gap-6 pt-4 text-sm text-muted-foreground">
-                <span className="flex items-center gap-1.5 font-medium">
-                  <Star className="size-4 fill-amber-400 text-amber-400" /> 4.9 Rating · 12,000+ Verified Matches
+              {/* Left Text Content */}
+              <div className="flex flex-col items-start space-y-5 lg:col-span-5">
+                <span className="text-xs font-bold uppercase tracking-[0.25em] text-neutral-900/90 bg-white/20 px-3 py-1 rounded-full backdrop-blur-xs">
+                  The Lumière Complexion Event
                 </span>
-                <span className="flex items-center gap-1.5 font-medium">
-                  <ShieldCheck className="size-4 text-primary" /> 100% Inclusive Spectrum
-                </span>
-              </div>
-            </div>
 
-            <div className="relative">
-              <div className="relative overflow-hidden rounded-3xl border bg-card shadow-2xl">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/images/hero-editorial.png"
-                  alt="Model with radiant complexion"
-                  className="aspect-[4/5] w-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between rounded-2xl border border-white/20 bg-background/80 p-4 backdrop-blur-md">
-                  <div>
-                    <p className="text-xs uppercase tracking-wider font-semibold text-primary">Matched Shade</p>
-                    <p className="font-serif text-lg font-bold">Tan Neutral 340 · 96% Match</p>
-                  </div>
-                  <ButtonLink href="/match" size="sm" variant="default" className="gap-1">
-                    Match Me <ArrowRight className="size-3.5" />
+                <h1 className="font-sans text-5xl font-black uppercase tracking-tight text-neutral-950 sm:text-6xl md:text-7xl lg:text-8xl leading-[0.92]">
+                  FLAWLESS MATCH. <br />
+                  <span className="underline decoration-neutral-950/20 underline-offset-8">25% OFF SITEWIDE.</span>
+                </h1>
+
+                <p className="text-sm sm:text-base md:text-lg font-medium text-neutral-900/90 leading-relaxed max-w-md">
+                  Unveil your seamless skin tone match. Enjoy 25% off all luxury foundations, radiant concealers, contour, and highlighters—applied automatically at checkout.
+                </p>
+
+                <div className="flex flex-wrap items-center gap-4 pt-3">
+                  <ButtonLink
+                    href="/match"
+                    className="bg-black text-white hover:bg-neutral-900 rounded-none px-8 py-3.5 text-xs font-bold uppercase tracking-widest transition-transform hover:scale-[1.02] shadow-lg"
+                  >
+                    SHOP NOW
+                  </ButtonLink>
+
+                  <ButtonLink
+                    href="/collections"
+                    variant="ghost"
+                    className="text-neutral-900 underline underline-offset-4 decoration-2 px-4 py-3.5 text-xs font-bold uppercase tracking-widest hover:bg-transparent hover:text-black"
+                  >
+                    LEARN MORE
                   </ButtonLink>
                 </div>
               </div>
+
+              {/* Right Beauty Products Banner Image */}
+              <div className="relative lg:col-span-7 flex justify-center items-center">
+                <div className="relative w-full max-w-2xl overflow-hidden rounded-2xl shadow-2xl transition-all">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/images/hero-banner-products.png"
+                    alt="Lumière Luxury Complexion & Beauty Collection"
+                    className="w-full h-auto object-cover object-center max-h-[520px] rounded-2xl"
+                  />
+                  {/* Subtle float badge overlay */}
+                  <div className="absolute top-4 right-4 bg-black/80 backdrop-blur-md text-white text-[11px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full shadow-lg border border-white/10 flex items-center gap-1.5">
+                    <Sparkles className="size-3.5 text-amber-400" /> Find Your Shade Off Auto-Applied
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        {/* Save on Bestsellers Section (Inspired by Fenty Beauty Bestsellers Row) */}
+        <section className="border-b bg-background px-4 py-12 md:px-8 md:py-16">
+          <div className="mx-auto max-w-7xl">
+            {/* Header row */}
+            <div className="flex items-end justify-between mb-8">
+              <div>
+                <h2 className="font-sans text-2xl sm:text-3xl font-black uppercase tracking-tight text-foreground">
+                  SAVE ON BESTSELLERS
+                </h2>
+                <p className="text-sm font-medium text-muted-foreground mt-1">
+                  Get &apos;em for 25% off while you can.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="icon" className="size-9 rounded-full" aria-label="Previous">
+                  <ChevronLeft className="size-4" />
+                </Button>
+                <Button variant="outline" size="icon" className="size-9 rounded-full" aria-label="Next">
+                  <ChevronRight className="size-4" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Bestseller Grid Cards */}
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5">
+              <Card className="flex flex-col justify-between p-6 bg-secondary/50 border-2 border-dashed border-primary/30 hover:border-primary transition-all">
+                <div className="space-y-3">
+                  <Badge variant="accent" className="text-[10px] font-bold tracking-widest uppercase">
+                    PROMO GIFT
+                  </Badge>
+                  <h3 className="font-serif text-lg font-bold uppercase tracking-tight text-foreground leading-snug">
+                    SHOP + UNLOCK FREE GIFTS
+                  </h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Get a free 3-piece gift on $75+ orders or 5-piece gift on $125+ orders.
+                  </p>
+                </div>
+
+                <ButtonLink
+                  href="/collections"
+                  variant="default"
+                  size="sm"
+                  className="mt-6 w-full rounded-none font-bold uppercase text-[11px] tracking-wider"
+                >
+                  LEARN MORE
+                </ButtonLink>
+              </Card>
+
+              {products.slice(0, 4).map((product, idx) => {
+                const discounts = ['30% OFF · NEW', '30% OFF · NEW', '25% OFF · BESTSELLER', '30% OFF · BESTSELLER']
+                const shadeCounts = ['48 Shades', '48 Shades', '20 Shades', '8 Shades']
+
+                return (
+                  <Card
+                    key={product.id}
+                    className="group flex flex-col overflow-hidden border transition-all hover:shadow-lg"
+                  >
+                    <div className="relative aspect-square w-full overflow-hidden bg-muted">
+                      <span className="absolute top-2 left-2 z-10 bg-black text-white text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-xs">
+                        {discounts[idx]}
+                      </span>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={product.image}
+                        alt={product.title}
+                        className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    </div>
+
+                    <div className="flex flex-1 flex-col justify-between p-4 space-y-3">
+                      <div>
+                        <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                          {shadeCounts[idx]}
+                        </p>
+                        <h3 className="font-medium text-sm text-foreground group-hover:text-primary transition-colors line-clamp-1">
+                          {product.title}
+                        </h3>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-1 border-t">
+                        <span className="font-serif font-bold text-sm text-foreground">
+                          {formatPrice(product.price * 0.75)}
+                        </span>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 px-2 text-xs font-semibold hover:bg-primary/10 hover:text-primary"
+                          onClick={() => openProductDetails(product)}
+                        >
+                          Quick View
+                        </Button>
+                      </div>
+                    </div>
+                  </Card>
+                )
+              })}
             </div>
           </div>
         </section>
@@ -222,27 +327,27 @@ export default function LandingPage() {
                         </div>
                       </div>
 
-                      {/* Collection Actions: View Product Modal + Direct Match CTA */}
+                      {/* Collection Actions: Shop & Add to Bag + Optional AI Match */}
                       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
-                        <ButtonLink
-                          href="/match"
-                          variant="default"
-                          size="lg"
-                          className="flex-1 gap-2 shadow-sm font-medium"
-                        >
-                          <Sparkles className="size-4" /> Find Your {col.category} Shade
-                        </ButtonLink>
                         {product && (
                           <Button
                             type="button"
-                            variant="outline"
+                            variant="default"
                             size="lg"
-                            className="shrink-0 gap-1.5 font-medium"
+                            className="flex-1 gap-2 shadow-sm font-semibold"
                             onClick={() => openProductDetails(product)}
                           >
-                            <Eye className="size-4" /> View Details
+                            <ShoppingBag className="size-4" /> Shop & Select Shade
                           </Button>
                         )}
+                        <ButtonLink
+                          href="/match"
+                          variant="outline"
+                          size="lg"
+                          className="shrink-0 gap-1.5 font-medium"
+                        >
+                          <Sparkles className="size-4 text-primary" /> Find Your Shade
+                        </ButtonLink>
                       </div>
                     </div>
                   </div>
@@ -252,31 +357,30 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Final Conversion Banner */}
+        {/* Final Shopping & AI Match Banner */}
         <section className="mx-auto max-w-7xl px-4 py-20 md:px-8">
-          <div className="relative overflow-hidden rounded-3xl bg-primary px-6 py-16 text-center text-primary-foreground md:px-16">
+          <div className="relative overflow-hidden rounded-3xl bg-neutral-900 px-6 py-16 text-center text-white md:px-16 shadow-2xl">
             <h2 className="mx-auto max-w-3xl font-serif text-4xl tracking-tight md:text-5xl">
-              Ready to find your perfect Lumière shade?
+              Shop Luxury Lumière Complexion Formulas
             </h2>
-            <p className="mx-auto mt-4 max-w-lg text-primary-foreground/80">
-              No registration or account required. Experience precision shade matching across foundations, concealers, contour, and highlighters.
+            <p className="mx-auto mt-4 max-w-lg text-neutral-300">
+              Browse our complete 48-shade spectrum directly and add to your bag, or try our optional precision AI shade matcher.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-4">
-              <ButtonLink
-                href="/match"
-                variant="secondary"
-                size="lg"
-                className="h-12 px-7 text-base font-semibold"
-              >
-                <Sparkles className="size-4" /> Start Scan Now
-              </ButtonLink>
               <ButtonLink
                 href="/collections"
                 variant="secondary"
                 size="lg"
-                className="h-12 px-6 text-base font-semibold bg-white text-neutral-900 border border-neutral-200 hover:bg-neutral-100 shadow-md"
+                className="h-12 px-7 text-base font-semibold bg-white text-neutral-900 hover:bg-neutral-100 shadow-lg"
               >
-                Browse Collections
+                <ShoppingBag className="size-4" /> Shop All Collections
+              </ButtonLink>
+              <ButtonLink
+                href="/match"
+                size="lg"
+                className="h-12 px-6 text-base font-semibold border border-white/40 bg-transparent text-white hover:bg-white/15 hover:text-white transition-colors gap-2"
+              >
+                <Sparkles className="size-4 text-amber-300" /> Find my shade
               </ButtonLink>
             </div>
           </div>

@@ -157,7 +157,7 @@ export function ProductModal({
                 className="w-full gap-2 text-xs font-semibold py-2.5"
                 onClick={onClose}
               >
-                <Sparkles className="size-3.5 text-primary" /> Scan Skin to Find Your Exact Shade
+                <Sparkles className="size-3.5 text-primary" /> Optional: Find Your Shade with AI
               </ButtonLink>
             </div>
           </div>
